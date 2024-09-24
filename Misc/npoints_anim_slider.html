@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <title>Automated Plot Animation for n Points with Slider and y=x^2 Curve</title>
+</head>
+<body>
+  <div id="graph"></div>
+
+  <script>
+    // Function to generate random points
+    function generateRandomPoints(n, rangeX = [-5, 5], rangeY = [0, 10]) {
+      let points = [];
+      for (let i = 0; i < n; i++) {
+        const x = Math.random() * (rangeX[1] - rangeX[0]) + rangeX[0];
+        const y = Math.random() * (rangeY[1] - rangeY[0]) + rangeY[0];
+        points.push([x, y]);
+      }
+      return points;
+    }
+
+    // Number of random points
+    const n = 5;
+    const points = generateRandomPoints(n);
+
+    // Create data for the y = x^2 curve
+    const xValues = Array.from({ length: 100 }, (_, i) => i * 0.1 - 5); // x from -5 to 5
+    const yValues = xValues.map(x => Math.pow(x, 2)); // y = x^2
+
+    // Initialize the plot with just the first point and the curve y = x^2
+    let data = [
+      {
+        x: xValues,
+        y: yValues,
+        mode: 'lines',
+        line: { color: 'green' },
+        name: 'y = x^2'
+      },
+      {
+        x: [points[0][0]], // First point
+        y: [points[0][1]],
+        mode: 'markers',
+        marker: { color: 'red', size: 10 },
+        name: 'Points'
+      },
+      {
+        x: [], // No lines initially
+        y: [],
+        mode: 'lines',
+        line: { color: 'blue' },
+        name: 'Line'
+      }
+    ];
+
+    let layout = {
+      title: `Animating ${n} Random Points with Slider and y = x^2`,
+      xaxis: { title: 'X-axis', range: [-6, 6] },
+      yaxis: { title: 'Y-axis', range: [0, 25] },
+      showlegend: true,
+      sliders: [{
+        pad: { t: 30 },
+        currentvalue: {
+          xanchor: 'right',
+          prefix: 'Step: ',
+          font: {
+            color: '#888',
+            size: 20
+          }
+        },
+        steps: []
+      }]
+    };
+
+    // Create the initial plot with the curve and first point
+    Plotly.newPlot('graph', data, layout);
+
+    // Add steps for the slider
+    let steps = [];
+    for (let i = 0; i < points.length; i++) {
+      steps.push({
+        label: `${i + 1}`, // Slider label
+        method: 'animate',
+        args: [[`step${i}`], {
+          mode: 'immediate',
+          transition: { duration: 300 },
+          frame: { duration: 300, redraw: false }
+        }]
+      });
+    }
+
+    // Update layout with slider steps
+    layout.sliders[0].steps = steps;
+    Plotly.relayout('graph', layout);
+
+    // Create animation frames for each step
+    let frames = [];
+    for (let i = 0; i < points.length; i++) {
+      const currentPointsX = points.slice(0, i + 1).map(p => p[0]);
+      const currentPointsY = points.slice(0, i + 1).map(p => p[1]);
+
+      frames.push({
+        name: `step${i}`,
+        data: [
+          { x: xValues, y: yValues }, // Keep the y = x^2 curve
+          { x: currentPointsX, y: currentPointsY }, // Update points
+          { x: currentPointsX, y: currentPointsY }  // Update lines
+        ]
+      });
+    }
+
+    // Add frames to the plot
+    Plotly.addFrames('graph', frames);
+  </script>
+</body>
+</html>

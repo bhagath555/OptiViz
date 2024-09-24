@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Input</title>
+    <link rel="stylesheet" href="vec.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Enter Two Vectors</h2>
+        <form id="vectorForm">
+            <div class="vector-input">
+                <label for="vector1">Vector 1:</label>
+                <input type="number" id="v1-x" placeholder="x" required>
+                <input type="number" id="v1-y" placeholder="y" required>
+                <input type="number" id="v1-z" placeholder="z">
+            </div>
+            <div class="vector-input">
+                <label for="vector2">Vector 2:</label>
+                <input type="number" id="v2-x" placeholder="x" required>
+                <input type="number" id="v2-y" placeholder="y" required>
+                <input type="number" id="v2-z" placeholder="z">
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="output"></div>
+    </div>
+    <script src="vec.js"></script>
+</body>
+</html>
+ 

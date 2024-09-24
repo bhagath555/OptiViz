@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <title>Automated Plot Animation for n Points</title>
+</head>
+<body>
+  <div id="graph"></div>
+
+  <script>
+    // Function to generate random points
+    function generateRandomPoints(n, rangeX = [-5, 5], rangeY = [0, 10]) {
+      let points = [];
+      for (let i = 0; i < n; i++) {
+        const x = Math.random() * (rangeX[1] - rangeX[0]) + rangeX[0];
+        const y = Math.random() * (rangeY[1] - rangeY[0]) + rangeY[0];
+        points.push([x, y]);
+      }
+      return points;
+    }
+
+    // Number of random points
+    const n = 5;
+    const points = generateRandomPoints(n);
+
+    // Initialize the plot with just the first point
+    let data = [
+      {
+        x: [points[0][0]], // First point
+        y: [points[0][1]],
+        mode: 'markers',
+        marker: { color: 'red', size: 10 },
+        name: 'Points'
+      },
+      {
+        x: [], // No lines initially
+        y: [],
+        mode: 'lines',
+        line: { color: 'blue' },
+        name: 'Line'
+      }
+    ];
+
+    let layout = {
+      title: `Animating ${n} Random Points`,
+      xaxis: { title: 'X-axis', range: [-6, 6] },
+      yaxis: { title: 'Y-axis', range: [0, 10] },
+      showlegend: true
+    };
+
+    // Create the initial plot
+    Plotly.newPlot('graph', data, layout);
+
+    // Function to animate the points and lines progressively
+    function animatePoints(points) {
+      let i = 1; // Start with the second point
+      const totalPoints = points.length;
+
+      function animateStep() {
+        if (i < totalPoints) {
+          // Update both points and line progressively
+          const currentPointsX = points.slice(0, i + 1).map(p => p[0]);
+          const currentPointsY = points.slice(0, i + 1).map(p => p[1]);
+
+          // Update trace for points
+          Plotly.update('graph', {
+            x: [currentPointsX],
+            y: [currentPointsY]
+          }, {}, [0]); // Update trace 0 (points)
+
+          // Update trace for lines
+          Plotly.update('graph', {
+            x: [currentPointsX],
+            y: [currentPointsY]
+          }, {}, [1]); // Update trace 1 (lines)
+
+          i++;
+          setTimeout(animateStep, 1000); // Animate every second
+        }
+      }
+
+      animateStep(); // Start the animation
+    }
+
+    // Start animating the points
+    animatePoints(points);
+  </script>
+</body>
+</html>
