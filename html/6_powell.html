@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Powell</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Math for Symbolic expressions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
+    
+    <!-- Plotly.js for plotting -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+    
+    <!-- MathJax for rendering LaTeX math -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Merriweather font -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
+    <!-- Style file -->
+    <link href="../style.css" rel="stylesheet" />
+
+    <!-- JavaScript code -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/optimization.js"></script>
+    <script src="../js/visualize.js"></script>
+    
+    <script src="../js/navbar.js"></script>
+    <script src="../js/page.js"></script>
+
+</head>
+
+<!-- Main content and body of the page -->
+
+<body class="bg-light px-4 py-2" data-page="powell">
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Input parameter -->
+    <div class="container-fluid px-0 pt-2 pb-1">
+        <form id="ParameterForm" class="bg-white rounded shadow px-4 py-2">
+            <div class="row g-3 align-items-center justify-content-start">
+
+                <!-- Objective Function -->
+                <div id="objective_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                    <!-- To be filled dynamically -->
+                </div>
+
+                <!-- Initial x₀ -->
+                <div id="x0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Initial y₀ -->
+                <div id="y0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+ 
+                <!-- Calculate Button -->
+                <div id="calculate_container" class="col-12 col-md-auto d-flex align-items-center">
+                </div>
+                
+            </div>
+        </form>
+    </div>
+
+
+
+    <div class="container-fluid px-0 py-1">
+        <div class="row g-2 align-items-start-end">
+
+            <!-- Plot Section -->
+            <div class="col-12 col-lg-8">
+                <div class="bg-white rounded shadow p-3 h-100 d-flex justify-content-center align-items-center">
+                    <div id="plot" class="w-100" style="height: 500px"></div>
+                </div>
+            </div>
+
+            <!-- Iteration Box -->
+            <div class="col-12 col-lg-4">
+                <div class="bg-white rounded shadow p-3 h-100 overflow-auto"
+                    style="font-family: monospace; font-size: 14px; max-height: 550px; overflow-y: auto;">
+                    <h6 id="termination"></h6>
+                    <table class="table mb-0">
+                        <thead class="sticky-top bg-white">
+                            <tr>
+                                <th scope="col">Iteration</th>
+                                <th scope="col">x</th>
+                                <th scope="col">y</th>
+                                <th scope="col">f(x, y)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="optTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mx-5, my-5">
+    
+            <h1 class="fw-bold mb-3 text-primary">Powell Method</h1>
+    
+            <p>
+                <strong>Powell’s Method</strong> is a derivative-free optimization algorithm designed to minimize a
+                multivariable function without computing gradients. It applies a sequence of one-dimensional minimizations (golden cut) along a set of parameter directions, iteratively refining the solution.
+            </p>
+
+            <h4 class="fw-bold mb-3 text-primary">2. Method</h4>
+            <p>
+                The algorithm proceeds by iteratively minimizing the function along a set of **conjugate directions**. At each
+                iteration, Powell:
+                <ul>
+                    <li>Performs a sequence of 1D line minimizations along each direction</li>
+                    <li>Updates the directions based on the change in position</li>
+                    <li>Searches along a newly constructed direction that captures combined progress</li>
+                </ul>
+            </p>
+
+            <h4 class="fw-bold mb-3 text-primary">3. Algorithm</h4>
+
+            <p>
+                The Powell method can be summarized in the following steps:
+                <ol>
+                    <li>Initialize the starting point and direction vectors.</li>
+                    <li>For each iteration:
+                        <ul>
+                            <li>Perform a line search along each direction vector to find the minimum.</li>
+                            <li>Update the direction vectors based on the new position.</li>
+                            <li>Construct a new direction vector that combines previous directions.</li>
+                        </ul>
+                    </li>
+                    <li>Repeat until convergence criteria are met.</li>
+                </ol>
+            </p>
+    
+
+
+            <h4 class="fw-bold mb-3 text-primary">4. Discussions</h4>
+            <p>
+                <ul>
+                    <li>Does not require gradient or Hessian information</li>
+                    <li>Effective for smooth low-dimensional problems</li>
+                    <li>Capable of superlinear convergence under certain conditions</li>
+                </ul>
+            </p>
+    
+            <p>
+                <ul>
+                    <li>Can be inefficient in high-dimensional or non-smooth problems</li>
+                    <li>Sensitive to initial direction set</li>
+                    <li>May converge to local minima if the function is not unimodal in direction searches</li>
+                </ul>
+            </p>
+
+            <h4 class="fw-bold mb-3 text-primary">5. Applications</h4>
+            <p>
+                Powell’s method is commonly used in:
+                <ul>
+                    <li>Engineering design optimization</li>
+                    <li>Curve and surface fitting</li>
+                    <li>Machine learning hyperparameter tuning (when gradients are unavailable)</li>
+                </ul>
+            </p>
+    
+    </div>
+    
+
+</body>
+
+</html>
