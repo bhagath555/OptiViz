@@ -2,18 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Math.js + Plotly.js on GitHub Pages</title>
+    <title>Function Plotter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        input, button { padding: 0.5rem; font-size: 1rem; }
+        #plot { margin-top: 2rem; }
+    </style>
 
-    <!-- Load external libraries -->
+    <!-- Math.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
+    <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-    <!-- Link to your own JS -->
+    <!-- Your script -->
     <script defer src="js/main.js"></script>
 </head>
 <body>
-    <h1>Math.js + Plotly Demo</h1>
-    <div id="plot" style="width:100%; max-width:600px; height:400px;"></div>
+    <h1>Function Plotter (Math.js + Plotly.js)</h1>
+    <label for="functionInput">Enter a function of x (e.g., sin(x), x^2, log(x)):</label>
+    <input type="text" id="functionInput" value="sin(x)" />
+    <button onclick="plotFunction()">Plot</button>
+
+    <div id="plot"></div>
 </body>
 </html>
