@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steepest descent</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Math for Symbolic expressions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
+
+    <!-- Plotly.js for plotting -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+
+    <!-- MathJax for rendering LaTeX math -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Merriweather font -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
+    <!-- Style file -->
+    <link href="/OptiViz/style.css" rel="stylesheet" />
+
+    <!-- JavaScript code -->
+    <script src="/OptiViz/js/utils.js"></script>
+    <script src="/OptiViz/js/optimization.js"></script>
+    <script src="/OptiViz/js/visualize.js"></script>
+    <script src="/OptiViz/js/navbar.js"></script>
+    <script src="/OptiViz/js/page.js"></script>
+
+
+
+</head>
+
+<!-- Main content and body of the page -->
+
+<body class="bg-light px-4 py-2" data-page="steepest">
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Input parameter -->
+    <div class="container-fluid px-0 pt-2 pb-1">
+        <form id="ParameterForm" class="bg-white rounded shadow px-4 py-2">
+            <div class="row g-3 align-items-center justify-content-start">
+                <!-- Toggle Switch -->
+                <div id="toggle2D_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Objective Function -->
+                <div id="objective_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                    <!-- To be filled dynamically -->
+                </div>
+
+                <!-- Line Search Strategy -->
+                <div id="line_search_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Initial x₀ -->
+                <div id="x0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Initial y₀ -->
+                <div id="y0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Step Length -->
+                <div id="step_length_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Calculate Button -->
+                <div id="calculate_container" class="col-12 col-md-auto d-flex align-items-center">
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+    <div class="container-fluid px-0 py-1">
+        <div class="row g-2 align-items-start-end">
+
+            <!-- Plot Section -->
+            <div class="col-12 col-lg-8">
+                <div class="bg-white rounded shadow p-3 h-100 d-flex justify-content-center align-items-center">
+                    <div id="plot" class="w-100" style="height: 500px"></div>
+                </div>
+            </div>
+
+            <!-- Iteration Box -->
+            <div class="col-12 col-lg-4">
+                <div class="bg-white rounded shadow p-3 h-100 overflow-auto"
+                    style="font-family: monospace; font-size: 14px; max-height: 550px; overflow-y: auto;">
+                    <h6 id="termination"></h6>
+                    <table class="table mb-0">
+                        <thead class="sticky-top bg-white">
+                            <tr>
+                                <th scope="col">Iteration</th>
+                                <th scope="col">x</th>
+                                <th scope="col">y</th>
+                                <th scope="col">f(x, y)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="optTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container mx-5, my-5">
+        <h1 class="fw-bold mb-3 text-primary">Steepest Descent Method</h1>
+
+        <p>
+            The <strong>Steepest Descent</strong> (also known as <em>Gradient Descent</em>) method is one of the most
+            fundamental algorithms in optimization. The basic idea of this method is to move in the direction of the
+            steepest descent of the function, which is given by the negative of the gradient vector.
+            The steepest descent method guarantees convergence to a local minimum for convex functions.
+        </p>
+
+        <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
+        <img src="../docs/sd_1.png" alt="Descriptive Alt" class="img-fluid float-end me-3 mb-3 rounded shadow"
+            style="width: 500px;">
+
+        <p>
+            Consider a function \(f: \mathbb{R}^n \to \mathbb{R}\) that is differentiable, and let \(x_0\) be the
+            initial guess.
+            The steepest descent method iteratively updates the current point \(x_0\) using the formula:
+            \[
+            x_{1} = x_0 - t_k \nabla f(x_0)
+            \]
+            where \(t_k\) is the step size (or learning rate) at iteration \(k\), and \(\nabla f(x_0)\) is the
+            gradient of \(f\) at \(x_0\).
+        </p>
+        <p>
+            For \(k^{th}\) iteration, the update rule becomes:
+            \[
+            x_{k+1} = x_k - t_k \nabla f(x_k)
+            \]
+            The process continues until convergence, which is typically defined as when the change in the function value
+            or the change in the point \(x\) is below a certain threshold.
+
+        </p>
+        <p>
+            The step size \(t_k\) can be determined using various methods, including:
+        <ul>
+            <li>Constant step size</li>
+            <li>Armijo Rule</li>
+            <li>Exact line search</li>
+        </ul>
+
+
+        <h4 class="fw-bold mb-3 text-primary">2. Line search method</h4>
+        <p> The step length \(t_k\) is determined using a line search method, which aims to find the optimal step
+            size that minimizes the function along the direction of the gradient.</p>
+        <p> The most common line search methods include:
+        <h5>2.1. Constant step length</h5>
+        <p> In this method, a fixed step length is used for all iterations. This is simple but may not be optimal for
+            all iterations.</p>
+        <h5>2.2. Armijo rule</h5>
+        <p> The Armijo rule is a backtracking line search method that adjusts the step length based on the decrease in
+            the function value. It ensures that the step length is not too large, which could lead to overshooting the
+            minimum.</p>
+        <h5>2.3. Exact line search</h5>
+        <p> The exact line search method finds the optimal step length by minimizing the function along the direction of
+            the gradient. This is computationally expensive but can lead to faster convergence.</p>
+
+        <p> The choice of line search method can significantly affect the convergence rate of the steepest descent
+            method.</p>
+        </p>
+
+        <h4 class="fw-bold mb-3 text-primary">3. Algorithm</h4>
+        <p>
+            The algorithm for the steepest descent method can be summarized as follows:
+        <ol>
+            <li>Initialize \(x_0\) and set a tolerance level \(\varepsilon\).</li>
+            <li>Compute the gradient \(\nabla f(x_k)\).</li>
+            <li>Determine the step length \(t_k\) using a line search method.</li>
+            <li>Update the point: \(x_{k+1} = x_k - t_k \nabla f(x_k)\).</li>
+            <li>Check for convergence: if \(|f(x_{k+1}) - f(x_k)| < \varepsilon\), stop; otherwise, go to step 2.</li>
+        </ol>
+        </p>
+
+        <h4 class="fw-bold mb-3 text-primary">4. Example</h4>
+        <p>
+            Consider the function \(f(x) = x^2 + 2x + 1\). The gradient is given by \(\nabla f(x) = 2x + 2\).
+            Starting from an initial guess \(x_0 = 4\), we can apply the steepest descent method with a constant step
+            size of \(t = 0.1\).
+            The iterations would look like this:
+            \[
+            x_1 = x_0 - t \cdot \nabla f(x_0) = 4 - 0.1 \cdot (2 \cdot 4 + 2) = 3
+            \]
+            \[
+            x_2 = x_1 - t \cdot \nabla f(x_1) = 3 - 0.1 \cdot (2 \cdot 3 + 2) = 2.2
+            \]
+            and so on, until convergence.
+
+        </p>
+
+
+        <h4 class="fw-bold mb-3 text-primary">5. Discussion</h4>
+        <p>
+            The steepest descent method is a simple and effective algorithm for optimization. For a convex function, it
+            guarantees convergence to a local minimum. However, the choice of step length and line search method can
+            significantly affect the convergence rate. In practice, more advanced methods like the Conjugate Gradient
+            method are often preferred for large-scale problems.
+        </p>
+        <h4 class="fw-bold mb-3 text-primary">6. References</h4>
+    </div>
+
+
+
+</body>
+
+</html>

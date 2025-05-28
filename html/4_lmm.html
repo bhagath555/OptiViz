@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LMM</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Math for Symbolic expressions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
+    
+    <!-- Plotly.js for plotting -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+
+    <!-- MathJax for rendering LaTeX math -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Merriweather font -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
+    <!-- Style file -->
+    <link href="../style.css" rel="stylesheet" />
+
+    <!-- JavaScript code -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/optimization.js"></script>
+    <script src="../js/visualize.js"></script>
+
+    <script src="../js/navbar.js"></script>
+    <script src="../js/page.js"></script>
+
+</head>
+
+<!-- Main content and body of the page -->
+
+<body class="bg-light px-4 py-2" data-page="lmm">
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Input parameter -->
+    <div class="container-fluid px-0 pt-2 pb-1">
+
+        <form id="ParameterForm" class="bg-white rounded shadow px-4 py-2">
+            <div class="row g-3 align-items-center justify-content-start">
+                <!-- Toggle Switch -->
+                <div id="toggle2D_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Objective Function -->
+                <div id="objective_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                    <!-- To be filled dynamically -->
+                </div>
+
+                <!-- Line Search Strategy -->
+                <div id="line_search_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Initial x₀ -->
+                <div id="x0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Initial y₀ -->
+                <div id="y0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Step Length -->
+                <div id="step_length_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Alpha -->
+                <div id="alpha_container" class="col-12 col-md-auto d-flex align-items-center gap-2"
+                    id="stepLengthContainer">
+                    <label for="alpha" class="form-label mb-0">Alpha</label>
+                    <input type="number" class="form-control" id="alpha" value="0.6" step="0.1"
+                        style="max-width: 100px;">
+                </div>
+
+
+                <!-- Calculate Button -->
+                <div id="calculate_container" class="col-12 col-md-auto d-flex align-items-center">
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+    <div class="container-fluid px-0 py-1">
+        <div class="row g-2 align-items-start-end">
+
+            <!-- Plot Section -->
+            <div class="col-12 col-lg-8">
+                <div class="bg-white rounded shadow p-3 h-100 d-flex justify-content-center align-items-center">
+                    <div id="plot" class="w-100" style="height: 500px"></div>
+                </div>
+            </div>
+
+            <!-- Iteration Box -->
+            <div class="col-12 col-lg-4">
+                <div class="bg-white rounded shadow p-3 h-100 overflow-auto"
+                    style="font-family: monospace; font-size: 14px; max-height: 550px; overflow-y: auto;">
+                    <h6 id="termination"></h6>
+                    <table class="table mb-0">
+                        <thead class="sticky-top bg-white">
+                            <tr>
+                                <th scope="col">Iteration</th>
+                                <th scope="col">x</th>
+                                <th scope="col">y</th>
+                                <th scope="col">f(x, y)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="optTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mx-5, my-5">
+        <h1 class="fw-bold mb-3 text-primary">Levenberg–Marquardt Method</h1>
+
+        <p>
+            The <strong>Levenberg–Marquardt (LM) Method</strong> is an iterative optimization algorithm that blends
+            the strengths of both <em>Gauss–Newton</em> (fast convergence) and <em>gradient descent</em> (guarantees the optimal) methods. It tries to balance the advantages of both methods by incorporating a damping parameter.
+        </p>
+
+        <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
+            <p>
+                The compromise between steepest descent and newton's method is achieved by introducing a damping parameter \( \alpha \).
+                
+                <ul>
+                    <li>Descent direction \( \mathbf{d^{sd}} \) of steepest descent methods is</li>
+                    \[
+                        \mathbf{d^{sd}} = -\nabla f(\mathbf{x}) = -\mathbf{I} \nabla f(\mathbf{x})
+                    \]
+                    Where \( \mathbf{I} \) is the identity matrix, and \( \nabla f(\mathbf{x}) \) is the gradient of the function.
+                    
+                    <li>Descent direction of Newton's method is</li>
+                    \[
+                        \mathbf{d^{N}} = -\mathbf{H}^{-1} \nabla f(\mathbf{x})
+                    \]
+
+                    Where \( \mathbf{H} \) is the Hessian matrix.
+
+                    <li>Descent direction of Levenberg–Marquardt method is</li>
+                    \[
+                        \mathbf{d^{LM}} = -(\mathbf{H} + \alpha \cdot \mathbf{I})^{-1} \nabla f(\mathbf{x})
+                    \]
+                    Where \( \alpha \) is the damping parameter.
+                <ul>
+                    <li>When \( \alpha \) is small, the method behaves like Newton's method.</li>
+                    <li>When \( \alpha \) is large, it behaves like steepest descent.</li>
+                </ul>
+                </ul>
+                
+
+
+                The Levenberg–Marquardt method iteratively updates the parameters \( \mathbf{x} \) using the formula:
+                \[
+                    \mathbf{x}_{k+1} = \mathbf{x}_k + t_k \cdot \mathbf{d^{LM}}
+                \]
+
+                Where \( t_k \) is the step size at iteration \( k \).
+                The process continues until convergence.
+
+            </p>
+
+        <h4 class="fw-bold mb-3 text-primary">2. Algorithm</h4>
+        
+        <p>
+            The Levenberg–Marquardt algorithm can be summarized in the following steps:
+            <ol>
+                <li>Initialize \( \mathbf{x}_0 \) and \( \alpha_0 \)</li>
+                <li>Compute the Hessian \( H \) </li>
+                <li>Compute the descent direction \( d^{LM} = -(H + \alpha I)^{-1} \nabla f(\mathbf{x}) \)</li>
+                <li>Compute the step size \( t_k \)</li>
+                <li>Update the parameters: \( x_{k+1} = x_k + t_k d^{LM} \)</li>
+                <li>Check for convergence. Continue from step 2 if convergence not satisfied</li>
+            </ol>
+
+        </p>
+
+        <h4 class="fw-bold mb-3 text-primary">3. Example</h4>
+        <p>
+            Consider the following example function:
+            \[
+            f(x, y) = (x - 1)^2 + (y - 2)^2
+            \]
+            The gradient of this function is:
+            \[
+            \nabla f(x, y) = (2(x - 1), 2(y - 2))
+            \]
+            The Hessian is:
+            \[
+            H(x, y) = \begin{pmatrix}
+            2 & 0 \\
+            0 & 2
+            \end{pmatrix}
+            \]
+            The function \( f(x, y) \) is a simple quadratic function with a minimum at \( (1, 2) \). We can use the Levenberg–Marquardt algorithm to find the minimum of this function.
+        </p>
+        <p>
+            The algorithm starts with an initial guess \( (x_0, y_0) = (0, 0) \), a damping parameter \( \alpha = 0.5 \), and step length \( t_k = 0.5 \).
+
+
+            The first iteration as follows:
+            \[
+            \begin{align*}
+            \nabla f(x_0, y_0) &= (2(0 - 1), 2(0 - 2)) = (-2, -4) \\
+            H(x_0, y_0) &= \begin{pmatrix}
+            2 & 0 \\
+            0 & 2
+            \end{pmatrix} \\
+
+            \alpha I &= \begin{pmatrix}
+            0.5 & 0 \\
+            0 & 0.5
+            \end{pmatrix} \\
+
+            d^{LM} &= -\begin{pmatrix}
+            2 + 0.5 & 0 \\
+            0 & 2 + 0.5
+            \end{pmatrix}^{-1} \begin{pmatrix}
+            -2 \\ -4
+            \end{pmatrix} \\
+            &= -\begin{pmatrix}
+            0.4 & 0 \\
+            0 & 0.4
+            \end{pmatrix} \begin{pmatrix}
+            -2 \\ -4
+            \end{pmatrix} \\
+            &= \begin{pmatrix}
+            0.8 \\ 1.6
+
+            \end{pmatrix} \\
+
+            x_1 &= x_0 + t_k d^{LM} \\
+            &= \begin{pmatrix} 0 \\ 0\end{pmatrix} + 0.5 \begin{pmatrix} 0.8 \\ 1.6 \end{pmatrix} \\
+            &= \begin{pmatrix}
+            0.4 \\ 0.8
+            \end{pmatrix}
+            \end{align*}
+        \]
+
+        The algorithm iteratively updates the parameters until convergence.
+
+        <h4 class="fw-bold mb-3 text-primary">4. Discussion</h4>
+        <p>
+        <ul>
+            <li>Combines the speed of Newton's method with the stability of gradient descent</li>
+            <li>Robust to poor initial estimates compared to Newton’s method</li>
+        </ul>
+        </p>
+
+        <h2 class="h5 mt-4 text-primary">7. Applications</h2>
+        <p>
+            <ul>
+                <li>Computer vision: bundle adjustment, camera calibration</li>
+                <li>Curve fitting in data science and physics</li>
+                <li>Nonlinear parameter estimation</li>
+            </ul>
+            </p>
+
+    </div>
+
+
+</body>
+
+</html>

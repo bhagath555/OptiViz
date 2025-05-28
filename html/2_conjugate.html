@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conjugate gradient</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Math for Symbolic expressions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
+    
+    <!-- Plotly.js for plotting -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+
+    <!-- MathJax for rendering LaTeX math -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Merriweather font -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
+    <!-- Style file -->
+    <link href="/OptiViz/style.css" rel="stylesheet" />
+
+    <!-- JavaScript code -->
+    <script src="/OptiViz/js/utils.js"></script>
+    <script src="/OptiViz/js/optimization.js"></script>
+    <script src="/OptiViz/js/visualize.js"></script>
+    <script src="/OptiViz/js/navbar.js"></script>
+    <script src="/OptiViz/js/page.js"></script>
+
+</head>
+
+<!-- Main content and body of the page -->
+
+<body class="bg-light px-4 py-2" data-page="conjugate">
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Input parameter -->
+    <div class="container-fluid px-0 pt-2 pb-1">
+        <form id="ParameterForm" class="bg-white rounded shadow px-4 py-2">
+            <div class="row g-3 align-items-center justify-content-start">
+                <!-- Toggle Switch -->
+                <div id="toggle2D_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Objective Function -->
+                <div id="objective_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                    <!-- To be filled dynamically -->
+                </div>
+
+                <!-- Line Search Strategy -->
+                <div id="line_search_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Optimal beta -->
+                <div id="beta_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                    <label for="betaSelect" class="form-label mb-0">Beta</label>
+                    <select class="form-select w-auto" id="betaSelect">
+                        <option value="FR">FR</option>
+                        <option value="PR">PR</option>
+                        <option value="HS">HS</option>
+                        <option value="DY">DY</option>
+                    </select>
+                </div>
+
+                <!-- Initial x₀ -->
+                <div id="x0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Initial y₀ -->
+                <div id="y0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Step Length -->
+                <div id="step_length_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                </div>
+
+                <!-- Calculate Button -->
+                <div id="calculate_container" class="col-12 col-md-auto d-flex align-items-center">
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+    <div class="container-fluid px-0 py-1">
+        <div class="row g-2 align-items-start-end">
+
+            <!-- Plot Section -->
+            <div class="col-12 col-lg-8">
+                <div class="bg-white rounded shadow p-3 h-100 d-flex justify-content-center align-items-center">
+                    <div id="plot" class="w-100" style="height: 500px"></div>
+                </div>
+            </div>
+
+            <!-- Iteration Box -->
+            <div class="col-12 col-lg-4">
+                <div class="bg-white rounded shadow p-3 h-100 overflow-auto"
+                    style="font-family: monospace; font-size: 14px; max-height: 550px; overflow-y: auto;">
+                    <h6 id="termination"></h6>
+                    <table class="table mb-0">
+                        <thead class="sticky-top bg-white">
+                            <tr>
+                                <th scope="col">Iteration</th>
+                                <th scope="col">x</th>
+                                <th scope="col">y</th>
+                                <th scope="col">f(x, y)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="optTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container mx-5, my-5">
+
+        <h1 class="fw-bold mb-3 text-primary">Conjugate Gradient Method</h1>
+
+
+        <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
+        <p> The idea of conjugate gradient method is to use the current gradient \(\nabla f(x_k)\) and gradients from
+            the previous iteration \(d_k\) to compute the next step descent direction.</p>
+        <p> \[ d_{k+1} = - \nabla f(x_k) + \beta_k d_k \]</p>
+
+
+        <h4 class="fw-bold mb-3 text-primary">2. Beta Computation/Method</h4>
+        <p> The parameter \(\beta_k\) is computed according to the following equations:</p>
+
+        <h5 class="fw-bold mb-3 text-primary">2.1 Fletcher-Reeves (FR)</h5>
+        \[
+        \beta_k^{FR} = \frac{|-\nabla f(x_k)|^2}{|-\nabla f(x_{k-1})|^2}
+        \]
+
+        <h5 class="fw-bold mb-3 text-primary">2.2 Polak-Ribiere (PR)</h5>
+        \[
+        \beta_k^{PR} = \frac{\nabla f(x_k)^T (\nabla f(x_k) - \nabla f(x_{k-1}))}{|-\nabla f(x_{k-1})|^2}
+        \]
+
+        <h5 class="fw-bold mb-3 text-primary">2.3 Hestenes-Stiefel (HS)</h5>
+        \[
+        \beta_k^{HS} = \frac{\nabla f(x_k)^T (\nabla f(x_k) - \nabla f(x_{k-1}))}{-d_{k-1}^T (-\nabla f(x_k) - \nabla f(x_{k-1}))}
+        \]
+        <h5 class="fw-bold mb-3 text-primary">2.4 Dai-Yuan (DY)</h5>
+        \[
+        \beta_k^{DY} = \frac{|-\nabla f(x_k)|^2}{-d_{k-1}^T (-\nabla f(x_k) - \nabla f(x_{k-1}))}
+        \]
+
+        <h4 class="fw-bold mb-3 text-primary">3. Algorithm</h4>
+        <p> The algorithm for the conjugate gradient method is as follows:</p>
+
+        <ul>
+            <li>Initialize at \( x_0 \in \mathbb{R}^n \), \( k = 1 \)</li>
+            <li>\( d_k = -\nabla f(x_k) \)</li>
+            <li>Set \( \epsilon \)</li>
+            <li>while \( \|\nabla f(x_k)\| > \epsilon \) do</li>
+            <ul>
+                <li>if \( k = 1 \) then</li>
+                <ul>
+                    <li>\( d_k = -\nabla f(x_k) \)</li>
+                </ul>
+                <li>else</li>
+                <ul>
+                    <li>compute \( \beta \) (see above mentioned methods)</li>
+                    <li>\( d_k = -\nabla f(x_k) + \beta d_{k-1} \)</li>
+                </ul>
+                <li>store \( d_k, \nabla f(x_k) \) for the next step</li>
+                <li>choose \( t_k \), e.g., approximate linesearch</li>
+                <li>\( x_{k+1} = x_k + t_k d_k \)</li>
+                <li>\( k = k + 1 \)</li>
+            </ul>
+        </ul>
+        
+
+        <h4 class="fw-bold mb-3 text-primary">4. Example</h4>
+        <p> In this 2 iteration example of the conjugate gradient method, consider the function \(f(x, y) = x^2 + y^2\). The gradient is given by \(\nabla f(x, y) = [2x, 2y]^T\).
+            Starting from an initial guess \(x_0 = [1, 1]^T\), we can apply the conjugate gradient method with a
+            constant step size of \(\alpha = 0.1\). The iterations would look like this:</p>
+        
+        <p><strong>Iteration 1:</strong></p>
+        <ul>
+            <li>\( \nabla f(x_0) = [2, 2]^T \)</li>
+            <li>\( d_0 = -\nabla f(x_0) = [-2, -2]^T \)</li>
+            <li>\( x_1 = x_0 + \alpha d_0 = [1, 1]^T + 0.1 \cdot [-2, -2]^T = [0.8, 0.8]^T \)</li>
+        </ul>
+
+        <p><strong>Iteration 2:</strong></p>
+        <ul>
+            <li>\( \nabla f(x_1) = [1.6, 1.6]^T \)</li>
+            <li>
+            Compute \( \beta_1^{FR} \) using:<br>
+            \[
+                \beta_1^{FR} = \frac{\|\nabla f(x_1)\|^2}{\|\nabla f(x_0)\|^2} 
+                = \frac{(1.6)^2 + (1.6)^2}{(2)^2 + (2)^2}
+                = \frac{5.12}{8} = 0.64
+            \]
+            </li>
+            <li>\( d_1 = -\nabla f(x_1) + \beta_1^{FR} d_0 = [-1.6, -1.6]^T + 0.64 \cdot [-2, -2]^T = [-2.88, -2.88]^T \)</li>
+            <li>\( x_2 = x_1 + \alpha d_1 = [0.8, 0.8]^T + 0.1 \cdot [-2.88, -2.88]^T = [0.512, 0.512]^T \)</li>
+        </ul>
+
+        <h4 class="fw-bold mb-3 text-primary">5. References</h4>
+
+
+
+
+
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nelder Mead</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Math for Symbolic expressions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
+    
+    <!-- Plotly.js for plotting -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+
+    <!-- MathJax for rendering LaTeX math -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Merriweather font -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
+    <!-- Style file -->
+    <link href="../style.css" rel="stylesheet" />
+
+    <!-- JavaScript code -->
+    <script src="../js/utils.js"></script>
+    <script src="../js/optimization.js"></script>
+    <script src="../js/visualize.js"></script>
+    
+    <script src="../js/navbar.js"></script>
+    <script src="../js/page.js"></script>
+
+</head>
+
+<!-- Main content and body of the page -->
+
+<body class="bg-light px-4 py-2" data-page="nelder">
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+    
+    <!-- Input parameter -->
+    <div class="container-fluid px-0 pt-2 pb-1">
+        <form id="ParameterForm" class="bg-white rounded shadow px-4 py-2">
+            <div class="row g-3 align-items-center justify-content-start">
+                <!-- Objective Function -->
+                <div id="objective_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
+                    <!-- To be filled dynamically -->
+                </div>
+
+                <!-- Point Input Grid Specific to nelder mead-->
+                <div class="col-12 col-md-auto">
+                    <!-- Row 1 -->
+                    <div class="row mb-2">
+                        <div class="col-6 d-flex align-items-center gap-2">
+                            <label for="x1" class="form-label mb-0">x₁</label>
+                            <input type="number" class="form-control" id="x1" value="4" step="0.1"
+                                style="max-width: 100px;">
+                        </div>
+                        <div class="col-6 d-flex align-items-center gap-2">
+                            <label for="y1" class="form-label mb-0">y₁</label>
+                            <input type="number" class="form-control" id="y1" value="0" step="0.1"
+                                style="width: 100px;">
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="row mb-2">
+                        <div class="col-6 d-flex align-items-center gap-2">
+                            <label for="x2" class="form-label mb-0">x₂</label>
+                            <input type="number" class="form-control" id="x2" value="4" step="0.1"
+                                style="width: 100px;">
+                        </div>
+                        <div class="col-6 d-flex align-items-center gap-2">
+                            <label for="y2" class="form-label mb-0">y₂</label>
+                            <input type="number" class="form-control" id="y2" value="4" step="0.1"
+                                style="width: 100px;">
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="row">
+                        <div class="col-6 d-flex align-items-center gap-2">
+                            <label for="x3" class="form-label mb-0">x₃</label>
+                            <input type="number" class="form-control" id="x3" value="0" step="0.1"
+                                style="width: 100px;">
+                        </div>
+                        <div class="col-6 d-flex align-items-center gap-2">
+                            <label for="y3" class="form-label mb-0">y₃</label>
+                            <input type="number" class="form-control" id="y3" value="4" step="0.1"
+                                style="width: 100px;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculate Button -->
+                <div id="calculate_container" class="col-12 col-md-auto d-flex align-items-center">
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+
+
+    <div class="container-fluid px-0 py-1">
+        <div class="row g-2 align-items-start-end">
+
+            <!-- Plot Section -->
+            <div class="col-12 col-lg-8">
+                <div class="bg-white rounded shadow p-3 h-100 d-flex justify-content-center align-items-center">
+                    <div id="plot" class="w-100" style="height: 500px"></div>
+                </div>
+            </div>
+
+            <!-- Iteration Box -->
+            <div class="col-12 col-lg-4">
+                <div class="bg-white rounded shadow p-3 h-100 overflow-auto"
+                    style="font-family: monospace; font-size: 14px; max-height: 550px; overflow-y: auto;">
+                    <h6 id="termination"></h6>
+                    <table class="table mb-0">
+                        <thead class="sticky-top bg-white">
+                            <tr>
+                                <th scope="col">Iteration</th>
+                                <th scope="col">x</th>
+                                <th scope="col">y</th>
+                                <th scope="col">f(x, y)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="optTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container mx-5, my-5">
+        <h1 class="fw-bold mb-3 text-primary">Nelder–Mead Method</h1>
+
+            <p>
+                The <strong>Nelder–Mead Method</strong> is a popular derivative-free optimization algorithm used to find the
+                minimum of a scalar-valued function in multidimensional space. It is based on the concept of a <strong>simplex</strong> and
+                uses geometrical transformations to iteratively improve the solution. This method is available in MATLAB as <code>fminsearch</code>.
+            </p>
+
+            <h4 class="fw-bold mb-3 text-primary">1. Motivation</h4>
+            <p>
+                Many real-world problems involve objective functions that are non-differentiable, noisy, or costly to evaluate.
+                The Nelder–Mead method provides an efficient way to handle such problems without requiring gradients. It evaluated the function at initial points and iteratively converges to point with minimum function value.
+            </p>
+
+            <h4 class="fw-bold mb-3 text-primary">2. The Simplex</h4>
+            <p>
+                Lets first define what is simplex. In \( \mathbb{R}^n \) dimensional space, \(n+1\) points form a simplex. 
+                For example:
+                <ul>
+                    <li>In 1D: a line segment (2 points)</li>
+                    <li>In 2D: a triangle (3 points)</li>
+                    <li>In 3D: a tetrahedron (4 points)</li>
+                </ul>
+                At each iteration, the coordinates of the simplex are transformed to move toward regions of lower function values.
+            </p>
+
+            <p>Given an objective function:</p>
+            <p>\[ f: \mathbb{R}^{n} \rightarrow \mathbb{R} \]</p>
+            <p>We start with an n-dimensional simplex consisting of \( n + 1 \) vertices:</p>
+            <p>\[ X_{1}, X_{2}, \dots, X_{n+1} \quad \text{where each } X_{i} \in \mathbb{R}^{n} \]</p>
+            <p>Evaluate the function at each vertex:</p>
+            <p>\[ f(X_{1}), f(X_{2}), \dots, f(X_{n+1}) \]</p>
+
+            <h4 class="fw-bold mb-3 text-primary">3. Methodology</h4>
+            <img src="../docs/Nm_1.svg" alt="Descriptive Alt" class="img-fluid float-end me-3 mb-3 rounded shadow"
+            style="width: 500px;">
+            <p>
+                After initializing the simplex with \( n+1 \) points, the function values at these points are evaluated and sorted in ascending order.
+                In order to move towards the minimum, the algorithm performs a series of transformations to the point with the highest function value (the worst point) 
+                based on the function values of the other points (the best and average points).
+    
+            <ul>
+                <li><strong>Reflection:</strong> Reflect the worst point across the centroid of the remaining points.</li>
+                <li><strong>Expansion:</strong> If reflection improves the function significantly, expand further in that direction.</li>
+                <li><strong>Contraction:</strong> If reflection fails, try contracting toward the centroid.</li>
+                <li><strong>Shrinkage:</strong> If contraction fails, shrink the entire simplex toward the best point.</li>
+            </ul>
+
+            <h4 class="fw-bold mb-3 text-primary">4. Reflection Formula</h4>
+            <p>
+                Let \( \mathbf{x}_h \) be the worst point, and \( \bar{\mathbf{x}} \) be the centroid of the other points.
+                The reflected point \( \mathbf{x}_r \) is given by:
+            </p>
+    
+            <div>
+                \[
+                \mathbf{x}_r = \bar{\mathbf{x}} + \alpha (\bar{\mathbf{x}} - \mathbf{x}_h)
+                \]
+            </div>
+    
+            <p>
+                where \( \alpha > 0 \) is the reflection coefficient (commonly \( \alpha = 1 \)).
+            </p>
+
+            <h4 class="fw-bold mb-3 text-primary">5. Expansion and Contraction</h4>
+
+            <p><strong>Expansion (if reflection is good):</strong></p>
+            <div>
+                \[
+                \mathbf{x}_e = \bar{\mathbf{x}} + \gamma (\mathbf{x}_r - \bar{\mathbf{x}}), \quad \gamma > 1
+                \]
+            </div>
+    
+            <p><strong>Contraction (if reflection is bad):</strong></p>
+            <div>
+                \[
+                \mathbf{x}_c = \bar{\mathbf{x}} + \rho (\mathbf{x}_h - \bar{\mathbf{x}}), \quad 0 < \rho < 1
+                \]
+            </div>
+    
+            <p><strong>Shrink (if all else fails):</strong> move all points toward the best point.</p>
+
+            <h4 class="fw-bold mb-3 text-primary">6. Stopping Criteria</h4>
+            <p>
+                The method terminates when the function values at the simplex vertices are close to each other:
+            </p>
+    
+            <div>
+                \[
+                \max_i |f(\mathbf{x}_i) - f(\mathbf{x}_\text{best})| < \varepsilon
+                \]
+            </div>
+    
+            <p>
+                or when the simplex becomes sufficiently small in size.
+            </p>
+
+            <h2>7. Transformation Summary</h2>
+<table>
+    <tr>
+        <th>Transformation</th>
+        <th>Formula</th>
+        <th>Typical Parameter</th>
+    </tr>
+    <tr>
+        <td>Reflection</td>
+        <td>\(\bar{X} + \alpha(\bar{X} - X_{n+1})\)</td>
+        <td>\(\alpha = 1\)</td>
+    </tr>
+    <tr>
+        <td>Expansion</td>
+        <td>\(\bar{X} + \gamma(X_{r} - \bar{X})\)</td>
+        <td>\(\gamma = 2\)</td>
+    </tr>
+    <tr>
+        <td>Outside Contraction</td>
+        <td>\(\bar{X} + \rho(X_{r} - \bar{X})\)</td>
+        <td>\(\rho = 0.5\)</td>
+    </tr>
+    <tr>
+        <td>Inside Contraction</td>
+        <td>\(\bar{X} - \rho(\bar{X} - X_{n+1})\)</td>
+        <td>\(\rho = 0.5\)</td>
+    </tr>
+    <tr>
+        <td>Shrink</td>
+        <td>\(X_{1} + \sigma(X_{i} - X_{1})\)</td>
+        <td>\(\sigma = 0.5\)</td>
+    </tr>
+</table>
+
+            <h4 class="fw-bold mb-3 text-primary">7. Discussions</h4>
+            <p> Advantages of the Nelder–Mead method include:
+                <ul>
+                    <li>Simple to implement and requires minimal memory</li>
+                    <li>Works well for low-dimensional problems (typically \( n \leq 10 \))</li>
+                    <li>Does not require derivative information, making it suitable for noisy or discontinuous functions</li>
+                </ul>
+            </p>
+            <p> Disadvantages include:
+                <ul>
+                    <li>Can be inefficient for high-dimensional problems</li>
+                    <li>May converge to local minima or stagnate in flat regions</li>
+                    <li>Not suitable for functions with many local minima</li>
+                </ul>
+            </p>
+
+
+            <h4 class="fw-bold mb-3 text-primary">9. Applications</h4>
+            <p>
+                The Nelder–Mead method is widely used in:
+                <ul>
+                    <li>Parameter tuning and calibration problems</li>
+                    <li>Engineering and physics simulations</li>
+                    <li>Econometrics and financial modeling</li>
+                    <li>Nonlinear curve fitting and black-box optimization</li>
+                </ul>
+            </p>
+    
+    </div>
+    
+
+
+
+</body>
+
+</html>

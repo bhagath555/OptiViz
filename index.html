@@ -1,28 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Function Plotter</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; }
-        input, button { padding: 0.5rem; font-size: 1rem; }
-        #plot { margin-top: 2rem; }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
 
-    <!-- Math.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
-    <!-- Plotly.js -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <!-- Your script -->
-    <script defer src="js/main.js"></script>
+    <!-- Bootstrap CSS JS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- MathJax for rendering LaTeX math -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Merriweather font -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
+
+    <!-- Style file -->
+    <link href="style.css" rel="stylesheet" />
+
+    <!-- JavaScript code -->
+    <script src="js/navbar.js"></script>
 </head>
-<body>
-    <h1>Function Plotter (Math.js + Plotly.js)</h1>
-    <label for="functionInput">Enter a function of x (e.g., sin(x), x^2, log(x)):</label>
-    <input type="text" id="functionInput" value="sin(x)" />
-    <button onclick="plotFunction()">Plot</button>
 
-    <div id="plot"></div>
+
+<body class="bg-light py-2 px-4">
+
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <!-- Content -->
+
+    <div class="container my-3 mb-2">
+        <div class="row align-items-center">
+
+            <!-- Left Side: Text -->
+            <div class="col-md-6">
+                <div class="container">
+                    <h1 class="display-4 fw-bold">Welcome to OptiViz</h1>
+                    <p class="lead">An interactive tool to visualize optimization algorithms in both 1D and 2D!</p>
+                    <a h ref="#algorithms" class="btn btn-primary btn-lg mt-3">Explore Algorithms</a>
+                </div>
+                <!-- <h1 class="mb-4">Welcome to OptiViz</h1>
+                <p>
+                    OptiViz helps you visualize powerful optimization algorithms in 1D and 2D. Select a method, tweak
+                    parameters, and
+                    watch how solutions evolve step by step.
+                </p>
+                <a href="#demo" class="btn btn-primary mt-3">Try a Demo</a> -->
+            </div>
+
+            <!-- Right Side: Carousel -->
+            <div class="col-md-6">
+                <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                    <div class="carousel-inner rounded shadow">
+
+                        <div class="carousel-item active">
+                            <img src="img1.png" class="d-block w-100" alt="Slide 1">
+                        </div>
+
+                        <div class="carousel-item">
+                            <img src="img2.png" class="d-block w-100" alt="Slide 2">
+                        </div>
+
+                        <div class="carousel-item">
+                            <img src="img3.png" class="d-block w-100" alt="Slide 3">
+                        </div>
+
+                    </div>
+
+                    <!-- Optional controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+
+                    <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+
+                    <!-- Optional indicators -->
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#imageCarousel" data-bs-slide-to="0"
+                            class="active"></button>
+                        <button type="button" data-bs-target="#imageCarousel" data-bs-slide-to="1"></button>
+                        <button type="button" data-bs-target="#imageCarousel" data-bs-slide-to="2"></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container mt-4 mb-2">
+        <h2 class="h4 text-primary mb-3">What is Optimization</h2>
+        <p>
+            Optimization is the process of making something as effective or functional as possible. In mathematics and
+            computer science, it refers to the selection of the best element from a set of alternatives. This can
+            involve minimizing or maximizing a function by systematically choosing input values from within an allowed
+            set and computing the value of the function.
+        </p>
+        <p>
+            In the context of numerical optimization, we often deal with functions that are continuous and
+            differentiable. The goal is to find the input values (or parameters) that minimize (or maximize) the output
+            of the function. This is crucial in various fields such as machine learning, engineering design, and
+            economics.
+        </p>	
+    </div>
+
+    <section id="algorithms" class="py-2">
+        <div class="container">
+            <h2 class="h4 text-primary mb-3">Optimization Categories</h2>
+            <p>
+                Optimization algorithms can be broadly categorized into three main types based on their approach to
+                finding the minimum or maximum of a function:
+            </p>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">First-Order (Gradient) Methods</h5>
+                            <ul>
+                                <li>Steepest Descent (1D/2D)</li>
+                                <li>Conjugate Gradient (1D/2D)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Repeat for 2nd-order and 0th-order -->
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Second-Order (Hessian) Methods</h5>
+                            <ul>
+                                <li>Newton method (1D/2D)</li>
+                                <li>Levenberg-Marquardt Method (1D/2D)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Zeroth-Order (derivative-free) Methods</h5>
+                            <ul>
+                                <li>Golden cut (1D)</li>
+                                <li>Powell (2D)</li>
+                                <li>Nelder-Mead (2D)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="inputs" class="py-2">
+        <div class="container">
+            <h2 class="h4 text-primary mb-3">Inputs</h2>
+            <p>
+                Each optimization method requires specific inputs to function effectively. 
+                Problem dimension (1D/2D), objective function, initial guess are common inputs for all the algorithms. 
+                Other inputs vary by the method. Below are few dropdown options for the inputs.
+                
+            </p>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">1D functions</h5>
+                            <ul>
+                                <li>Parabola : (\( 2 + x^2 \)  )</li>
+                                <li>Wavy bowl : (\( 0.05\,x^2 - \cos(x) \)) </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Repeat for 2nd-order and 0th-order -->
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">2D function</h5>
+                            <ul>
+                                <li>Sphere :  \( x^2 + y^2 \)</li>
+                                <li>Rosenbrock :  \( (1 - x)^2 + 100\,(y - x^2)^2 \) </li>
+                                <li>Himmelblau : \( (x^2 + y - 11)^2 + (x + y^2 - 7)^2 \)</li>
+                                <li>SinCos bowl :  \( \sin(x)\cos(y) + 0.1\,(x^2 + y^2) \)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Line search method</h5>
+                            <ul>
+                                <li>Constant : requires step length</li>
+                                <li>Armijo</li>
+                                <li>Exact line search</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">Beta method (Conjugate gradient)</h5>
+                            <ul>
+                                <li>Fletcher–Reeves</li>
+                                <li>Polak–Ribière</li>
+                                <li>Hestenes–Stiefel</li>
+                                <li>Dai-Yuan</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+    <div class = "container mt-4 mb-2">
+        <h2 class="h4 text-primary mb-3">Demo</h2>
+        <video width="100%" loop muted controls 
+         class="rounded shadow-lg border border-secondary">
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+
+    
+
+
+    <footer class="bg-light text-center py-3 mt-5">
+        <small>&copy; 2025 OptiViz. Made with ❤️ for learning optimization.</small>
+    </footer>
+
+
 </body>
+
 </html>
