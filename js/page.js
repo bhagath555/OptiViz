@@ -1,3 +1,5 @@
+import * as viz from './visualization.js';
+
 
 // Making DOM Content Loaded before any action on the page - MAIN FUNCTION OF DYANMICS ACCESS.
 
@@ -109,40 +111,40 @@ function eventListeners() {
             const page = document.body.dataset.page; // Get the current page from the body data attribute
             const toggle2D = document.getElementById("toggle2D");
             if (toggle2D.checked) {
-                visualize2d(page);
+                viz.visualize2d(page);
             }
             else {
-                visualize1d(page);
+                viz.visualize1d(page);
             }
         });
         
     }
     // Page is golden section search
     else if (page === "golden") {
-        calculateBtn = document.getElementById("calculateBtn");
+        const calculateBtn = document.getElementById("calculateBtn");
         // Event listener for calculate button
         calculateBtn.addEventListener("click", function () {
-            visualize_golden(); // plot the function with initial guess
+            viz.visualize_golden(); // plot the function with initial guess
         })
 
         // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
         obj_selector.addEventListener("change", function () {
-            golden_initial(); // plot the function with initial guess
+            viz.golden_initial(); // plot the function with initial guess
         });
 
         // Event listener for a0
         const a0 = document.getElementById("a0");
         a0.addEventListener("input", function () {
-            golden_initial();
+            viz.golden_initial();
         });
 
         const c0 = document.getElementById("c0");
         c0.addEventListener("input", function () {
-            golden_initial();
+            viz.golden_initial();
         });
 
-        golden_initial(); // plot the function with initial guess
+        viz.golden_initial(); // plot the function with initial guess
 
     }
     // Page is powell or nelder mead
@@ -150,27 +152,27 @@ function eventListeners() {
         // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
         obj_selector.addEventListener("change", function () {
-            visualize2D_powell_initial(plot_id); // plot the function with initial guess
+            viz.visualize2D_initial(plot_id); // plot the function with initial guess
         });
 
         // Event listener for x0
         const x0 = document.getElementById("x0");
         x0.addEventListener("input", function () {
-            visualize2D_powell_initial(plot_id); // plot the function with initial guess
+            viz.visualize2D_initial(plot_id); // plot the function with initial guess
         });
 
         // Event listener for y0
         const y0 = document.getElementById("y0");
         y0.addEventListener("input", function () {
-            visualize2D_powell_initial(plot_id); // plot the function with initial guess
+            viz.visualize2D_initial(plot_id); // plot the function with initial guess
         });
 
         const calculateBtn = document.getElementById("calculateBtn");
         calculateBtn.addEventListener("click", function() {
-            visualize_powell(); // plot the function with initial guess
+            viz.visualize_powell(); // plot the function with initial guess
         });
 
-        visualize2D_powell_initial(plot_id); // plot the function with initial guess
+        viz.visualize2D_initial(plot_id); // plot the function with initial guess
 
     }
 
@@ -179,30 +181,30 @@ function eventListeners() {
         // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
         obj_selector.addEventListener("change", function () {
-            nelder_initial();
+            viz.nelder_initial();
         });
 
         // Event listener for x0,y0,x1,y1,x2,y2,x3,y3
         const inputs = ['x1', 'y1', 'x2', 'y2', 'x3', 'y3'];
         inputs.forEach(id => {
             const input = document.getElementById(id);
-            // Event listensrs for each input
+            // Event listeners for each input
             input.addEventListener("input", function () {
-                nelder_initial();
+                viz.nelder_initial();
             });
         });
 
         const calculateBtn = document.getElementById("calculateBtn");
         calculateBtn.addEventListener("click", function() {
-            visualize_nelder(); // plot the function with initial guess
+            viz.visualize_nelder(); // plot the function with initial guess
         });
 
-        nelder_initial(); // plot the function with initial guess
+        viz.nelder_initial(); // plot the function with initial guess
     }
 }
 
 
-// Event listners that creates the dynamic html for 2D toggle and objective select
+// Event listeners that creates the dynamic html for 2D toggle and objective select
 function toggle2DEvents() {
     const page = document.body.dataset.page; // Get the current page from the body data attribute
     const plot_id = "plot"; 
@@ -223,9 +225,9 @@ function toggle2DEvents() {
         const x0 = document.getElementById("x0");
         const y0 = document.getElementById("y0");
         
-        // Event listner for objecitve select
+        // Event listener for objective select
         obj_selector.addEventListener("change", function () {
-            visualize2D_initial(plot_id); // plot the function with initial guess
+            viz.visualize2D_initial(plot_id); // plot the function with initial guess
         });
 
         // Event listener for x0
@@ -237,9 +239,9 @@ function toggle2DEvents() {
             if (sceneId && plotElement._fullLayout[sceneId]?.camera) {
                 camera = plotElement._fullLayout[sceneId].camera;
             }
- 
-            visualize2D_initial(plot_id, camera);
-        
+
+            viz.visualize2D_initial(plot_id, camera);
+
         });
 
         // Event listener for y0
@@ -252,11 +254,11 @@ function toggle2DEvents() {
                 camera = plotElement._fullLayout[sceneId].camera;
             }
 
-            visualize2D_initial(plot_id, camera); // plot the function with initial guess
+            viz.visualize2D_initial(plot_id, camera); // plot the function with initial guess
         });
 
         // ------------------------------------------------------
-        visualize2D_initial(plot_id); // plot the function with initial guess
+        viz.visualize2D_initial(plot_id); // plot the function with initial guess
 
 
     } else { // 1D
@@ -272,19 +274,19 @@ function toggle2DEvents() {
 
         // Objective select event listener
         obj_selector.addEventListener("change", function () {
-            visualize1D_initial(plot_id); // plot the function with initial guess
+            viz.visualize1D_initial(plot_id); // plot the function with initial guess
         });
 
         // Event listener for x0
         x0.addEventListener("input", function () {
-            visualize1D_initial(plot_id); // plot the function with initial guess
+            viz.visualize1D_initial(plot_id); // plot the function with initial guess
         });
 
         // Note : y0 is not used in 1D, so no need to add event listener for y0
 
         // Initial plot with default values
         // ---------------------------------------------------------------------
-        visualize1D_initial(plot_id); // plot the function with initial guess
+        viz.visualize1D_initial(plot_id); // plot the function with initial guess
 
     }
 }
