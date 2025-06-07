@@ -98,17 +98,18 @@
     <div class="container mt-4 mb-2">
         <h2 class="h4 text-primary mb-3">What is Optimization</h2>
         <p>
-            Optimization is the process of making something as effective or functional as possible. In mathematics and
-            computer science, it refers to the selection of the best element from a set of alternatives. This can
-            involve minimizing or maximizing a function by systematically choosing input values from within an allowed
-            set and computing the value of the function.
+            Optimization is the process of finding the best solution from set of all possible solutions. 
+            For example, finding the best route to deliver goods that minimizes the total travel time and/or cost, scheduling machines in a factory to maximize the production quantity.
+            In engineering, it involves finding the optimal shape of a dam to maximize its strength against the water pressure.
+            Most recently, adjusting the parameters of a machine learning model to achieve better accuracy.
         </p>
         <p>
-            In the context of numerical optimization, we often deal with functions that are continuous and
-            differentiable. The goal is to find the input values (or parameters) that minimize (or maximize) the output
-            of the function. This is crucial in various fields such as machine learning, engineering design, and
-            economics.
-        </p>	
+            In order to achieve above mentioned goals, It is essential to describe the problem as a mathematical function (also called objective or cost function) with all the influencing factors as inputs to the function. The mathematical modelling of the problem requires domain knowledge. Systematic methods are then used to find the input values that minimize or maximize the function value.  
+        </p>
+        
+        <p>
+            Lets assume we have a function \( f(x) \) that we want to minimize. The optimization process starts with an initial guess \( x = x_0 \) and iteratively update the \( x\) to \( x_i \) until certain number of iterations or the solution met the convergence criteria (more on this in optimization methods section). All the optimization methods vary in how they update the \( x \) value in each iteration.
+        </p>
     </div>
 
     <section id="algorithms" class="py-2">
@@ -123,6 +124,7 @@
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title text-primary">First-Order (Gradient) Methods</h5>
+                            Uses only the first derivative of the function to find new optimal point.
                             <ul>
                                 <li>Steepest Descent (1D/2D)</li>
                                 <li>Conjugate Gradient (1D/2D)</li>
@@ -136,6 +138,7 @@
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title text-primary">Second-Order (Hessian) Methods</h5>
+                            Uses the first and second detivates of the function to find new optimal point.
                             <ul>
                                 <li>Newton method (1D/2D)</li>
                                 <li>Levenberg-Marquardt Method (1D/2D)</li>
@@ -148,6 +151,7 @@
                     <div class="card h-100 shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title text-primary">Zeroth-Order (derivative-free) Methods</h5>
+                            Doesn't use the derivatives of the function. Evaluates the function at various points to find the minimum.
                             <ul>
                                 <li>Golden cut (1D)</li>
                                 <li>Powell (2D)</li>
@@ -160,74 +164,8 @@
         </div>
     </section>
 
-    <section id="inputs" class="py-2">
-        <div class="container">
-            <h2 class="h4 text-primary mb-3">Inputs</h2>
-            <p>
-                Each optimization method requires specific inputs to function effectively. 
-                Problem dimension (1D/2D), objective function, initial guess are common inputs for all the algorithms. 
-                Other inputs vary by the method. Below are few dropdown options for the inputs.
-                
-            </p>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">1D functions</h5>
-                            <ul>
-                                <li>Parabola : (\( 2 + x^2 \)  )</li>
-                                <li>Wavy bowl : (\( 0.05\,x^2 - \cos(x) \)) </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- Repeat for 2nd-order and 0th-order -->
-
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">2D function</h5>
-                            <ul>
-                                <li>Sphere :  \( x^2 + y^2 \)</li>
-                                <li>Rosenbrock :  \( (1 - x)^2 + 100\,(y - x^2)^2 \) </li>
-                                <li>Himmelblau : \( (x^2 + y - 11)^2 + (x + y^2 - 7)^2 \)</li>
-                                <li>SinCos bowl :  \( \sin(x)\cos(y) + 0.1\,(x^2 + y^2) \)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">Line search method</h5>
-                            <ul>
-                                <li>Constant : requires step length</li>
-                                <li>Armijo</li>
-                                <li>Exact line search</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title text-primary">Beta method (Conjugate gradient)</h5>
-                            <ul>
-                                <li>Fletcher–Reeves</li>
-                                <li>Polak–Ribière</li>
-                                <li>Hestenes–Stiefel</li>
-                                <li>Dai-Yuan</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-
+   
+<!-- 
     <div class = "container mt-4 mb-2">
         <h2 class="h4 text-primary mb-3">Demo</h2>
         <video width="100%" loop muted controls 
@@ -235,14 +173,14 @@
             <source src="video.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
-    </div>
+    </div> -->
 
 
     
 
 
     <footer class="bg-light text-center py-3 mt-5">
-        <small>&copy; 2025 OptiViz. Made with ❤️ for learning optimization.</small>
+        <small>&copy; 2025 OptiViz</small>
     </footer>
 
 
