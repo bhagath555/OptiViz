@@ -487,6 +487,7 @@ export function nelderMead2D(funcname, initialVertices, tolerance = 1e-9, maxIte
 
     let isConverged = false;
     let iter = 0;
+    let operations = [];
 
     // Main optimization loop
     while (stdDev(fvals) > tolerance && iter < maxIter) {
@@ -505,12 +506,19 @@ export function nelderMead2D(funcname, initialVertices, tolerance = 1e-9, maxIte
         if (fvals[0] <= f_r && f_r < fvals[1]) {
             // Accept reflection if it's better than second-best but not better than best
             vertices[2] = reflect;
+            operations.push('reflection');
 
         } else if (f_r < fvals[0]) {
             // If reflection is best so far, try expansion
             const expand = vectorOp(x_bar, vertices[2], mu_e);
             const f_e = func(expand);
-            vertices[2] = (f_e < f_r) ? expand : reflect;
+            if (f_e < f_r) {
+                vertices[2] = expand;
+                operations.push('expansion');
+            } else {
+                vertices[2] = reflect;
+                operations.push('reflection');
+            }
 
         } else if (fvals[1] <= f_r && f_r < fvals[2]) {
             // If reflection is worse than second-best but better than worst, try outside contraction
@@ -518,9 +526,11 @@ export function nelderMead2D(funcname, initialVertices, tolerance = 1e-9, maxIte
             const f_oc = func(contract);
             if (f_oc < f_r) {
                 vertices[2] = contract;
+                operations.push('outside contraction');
             } else {
                 // Shrink simplex towards best vertex
                 shrink(vertices);
+                operations.push('shrink');
             }
 
         } else if (f_r >= fvals[2]) {
@@ -529,9 +539,11 @@ export function nelderMead2D(funcname, initialVertices, tolerance = 1e-9, maxIte
             const f_ic = func(contract);
             if (f_ic < fvals[2]) {
                 vertices[2] = contract;
+                operations.push('inside contraction');
             } else {
                 // Shrink simplex towards best vertex
                 shrink(vertices);
+                operations.push('shrink');
             }
         }
 
@@ -548,5 +560,5 @@ export function nelderMead2D(funcname, initialVertices, tolerance = 1e-9, maxIte
         isConverged = true;
     }
 
-    return [allVertices, isConverged];
+    return [allVertices, isConverged, operations];
 }

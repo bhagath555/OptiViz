@@ -475,9 +475,8 @@ export function visualize_nelder() {
     // Use as coordinates
     const initialVertices = getNelderMeadInputs();
 
-    const [simplexes, isConverged] = opti.nelderMead2D(funcname, initialVertices, 1e-2);
+    const [simplexes, isConverged, operations] = opti.nelderMead2D(funcname, initialVertices, 1e-2);
 
-    
     // Create surface
     const { X, Y, Z } = vizUtils.get2dPlotData(f, vizUtils.nelder_max_x0(initialVertices));
 
@@ -506,7 +505,13 @@ export function visualize_nelder() {
         
         // Append the table row with the current step information
         vizUtils.nelderMeadTableRow(table_body, i, simp[0][0], simp[0][1], f([simp[0][0], simp[0][1]]));
-        vizUtils.nelderMeadTableRow(table_body, '', simp[1][0], simp[1][1], f([simp[1][0], simp[1][1]]));
+        
+        if (i == 0) {
+            vizUtils.nelderMeadTableRow(table_body, '', simp[1][0], simp[1][1], f([simp[1][0], simp[1][1]]));
+        }
+        else {
+            vizUtils.nelderMeadTableRow(table_body, operations[i-1], simp[1][0], simp[1][1], f([simp[1][0], simp[1][1]]));
+        }
         vizUtils.nelderMeadTableRow(table_body, '', simp[2][0], simp[2][1], f([simp[2][0], simp[2][1]]));
 
         return {
