@@ -44,26 +44,47 @@ export function nelderMeadTableRow(table_body, itr, x, y, f) {
 }
 
 export function displayTermination(isConverged, num_steps, isDiverged=false){
-    const Temination = document.getElementById('termination');
+    const Termination = document.getElementById('termination');
     if (isDiverged) {
-        Temination.innerHTML = "Termination : Diverging";
-        Temination.style.color = "red";
+        Termination.innerHTML = "Termination : Diverging";
+        Termination.style.color = "red";
         return;
     }
     if (isConverged) {
-        Temination.innerHTML = "Termination : Converged after " + (num_steps - 1) + " steps";
-        Temination.style.color = "green";
+        Termination.innerHTML = "Termination : Converged after " + (num_steps - 1) + " steps";
+        Termination.style.color = "green";
     } else {
-        Temination.innerHTML = "Termination : Maximum number of steps reached";
-        Temination.style.color = "blue";
+        Termination.innerHTML = "Termination : Maximum number of steps reached";
+        Termination.style.color = "blue";
     }
 }
 
 
 export function displayTerminationInitial(){
-    const Temination = document.getElementById('termination');
-    Temination.innerHTML = "Termination : Not started yet";
-    Temination.style.color = "black";
+    const Termination = document.getElementById('termination');
+    Termination.innerHTML = "Termination : Not started yet";
+    Termination.style.color = "black";
+}
+
+export function displayInvalidFunction(){
+    const Termination = document.getElementById('termination');
+    Termination.innerHTML = `Invalid function, please check the function input.`;
+    Termination.style.color = "red";
+}
+
+export function displayInvalidFunctionOpti(message){
+    const Termination = document.getElementById('termination');
+    Termination.innerHTML = `Invalid function, please check the function input.
+    </br> Can't perform optimization`;
+    Termination.style.color = "red";
+}
+
+export function displayInvalidInput(message){
+    const Termination = document.getElementById('termination');
+    Termination.innerHTML = `Invalid input - ${message}.
+    </br> please check the input values.
+    </br> Can't perform optimization`;
+    Termination.style.color = "red";
 }
 
 // ----------------------- Plotting helpers ----------------------- //
@@ -215,9 +236,9 @@ export function plotly2DInitialData(X,Y,Z,x0,y0,z0) {
         // Points on the surface
         create_line_2d([x0], [y0], [z0], 'scatter3d', 'markers', 'black', 2, null, 4),
         // Descent direction
-        create_line_2d([], [], [], 'scatter3d', 'lines', 'blue', 2, null),
+        create_line_2d([], [], [], 'scatter3d', 'lines', 'black', 2, null),
         // Projection line
-        create_line_2d([], [], [], 'scatter3d', 'lines', 'green', 1, 'dot')
+        create_line_2d([], [], [], 'scatter3d', 'lines+markers', 'black', 1, 'dot')
     ];
 }
 

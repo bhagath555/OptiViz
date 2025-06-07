@@ -1,7 +1,17 @@
-import { getFunction } from './functionUtils.js';
+import { getFunction, showError } from './functionUtils.js';
 import * as opti from './optimization.js'
 import * as vizUtils from './vizUtils.js';
 
+export function validateFunctionFor1srtOrder(func) {
+    if (func) {
+        if (!func.f){
+            showError( 'Function error', 'Function is not valid');
+        }
+    }
+    else {
+        showError( 'Function error', 'Function is not valid');
+    }
+}
 
 export function getNelderMeadInputs() {
     const x1 = parseFloat(document.getElementById('x1').value);
@@ -10,6 +20,10 @@ export function getNelderMeadInputs() {
     const y2 = parseFloat(document.getElementById('y2').value);
     const x3 = parseFloat(document.getElementById('x3').value);
     const y3 = parseFloat(document.getElementById('y3').value);
+
+    if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2) || isNaN(x3) || isNaN(y3)) {
+        return null;
+    }
 
     return [[x1, y1], [x2, y2], [x3, y3]];
 }
@@ -41,10 +55,14 @@ export function getStepLengthValue(){
     return getNumericInput('stepLength', 0.1);
 }
 
-export function getNumericInput(id, fallback = null) {
+export function getNumericInput(id) {
     const el = document.getElementById(id);
-    if (!el) return fallback;
+    if (!el) return null;
     const val = parseFloat(el.value);
+    if (isNaN(val)) {
+        console.warn(`Invalid numeric input for ${id}:`, el.value);
+        return null;
+    }
     return val;
 }
 
@@ -55,13 +73,25 @@ export function visualize1D_initial(plot_id, x_min = -10, x_max = 10) {
     const funcname = document.getElementById("objectiveSelect").value.trim();
     const x0 = getX0();
 
+
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = ""; // Clear the previous table content
-    
+    vizUtils.displayTerminationInitial();
+
     // Check if the function name is valid and get the function
-    const f = getFunction(funcname, 1).f;
-    if (!f) {
-        console.error("Invalid function name:", funcname);
+    const func = getFunction(funcname, 1);
+
+    if (!func) {
+        vizUtils.displayInvalidFunction();
+        Plotly.purge(plot_id);
+        return;
+    }
+
+    const f = func.f;
+
+    if (!x0) {
+        vizUtils.displayInvalidInput('x0');
+        Plotly.purge(plot_id);
         return;
     }
 
@@ -69,8 +99,6 @@ export function visualize1D_initial(plot_id, x_min = -10, x_max = 10) {
 
     // Get the data for plotting
     const data = vizUtils.plotly_1d_initial_data(X, Y, x0, f(x0));
-
-    vizUtils.displayTerminationInitial();
 
     const layout = vizUtils.getLayout(1, 'Function with Initial Guess');
 
@@ -82,6 +110,23 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
     // Access all the information
     const funcname = document.getElementById('objectiveSelect').value;
     const x0 = getX0();
+    const plot_id = 'plot';
+    const table_body = document.getElementById('optTableBody');
+    table_body.innerHTML = ""; // Clear the previous table content
+
+    if (!x0) {
+        vizUtils.displayInvalidInput('x0');
+        Plotly.purge(plot_id);
+        return;
+    }
+    const func = getFunction(funcname, 1);
+    if (!func) {
+        vizUtils.displayInvalidFunctionOpti();
+        Plotly.purge(plot_id);
+        return;
+    }
+    const f = func.f;
+    
 
     // Access the step method and length
     let step_method = null, step_length = null;
@@ -93,18 +138,20 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
         }
     }
 
-
-    const plot_id = 'plot';
-
-    const table_body = document.getElementById('optTableBody');
-    table_body.innerHTML = ""; // Clear the previous table content
+    // Validate step length
+    if (!step_length) {
+        vizUtils.displayInvalidInput('stepLength');
+        Plotly.purge(plot_id);
+        return;
+    }
 
     const tol = 1e-2;
     const max_itr = 100;
 
     let plot_name, isConverged, isDiverged;
-    const f = getFunction(funcname, 1).f;
+
     const { X, Y } = vizUtils.get1dPlotData(f, x0);
+
 
     // Optimization Algorithm
     let x_all = [], f_all = [], x_dot = [], f_dot = [];
@@ -127,6 +174,11 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
         case 'lmm':
             plot_name = "LMM";
             const alpha = parseFloat(document.getElementById('alpha').value);
+            if (isNaN(alpha)) {
+                vizUtils.displayInvalidInput('alpha');
+                Plotly.purge(plot_id);
+                return;
+            }
             [x_all, f_all, x_dot, f_dot, isConverged, isDiverged] = opti.lmm1D(funcname, step_method, x0, step_length, alpha, tol, max_itr);
             break;
         default:
@@ -134,6 +186,8 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
             return;
     }
 
+    console.log("x_all:", x_all);
+    console.log("f_all:", f_all);
     // Get the data for plotting
     const data = vizUtils.plotly_1d_initial_data(X, Y, x0, f(x0));
 
@@ -195,13 +249,20 @@ export function visualize2D_initial(plot_id, cameraoverride = null) {
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = ""; // Clear the previous table content
 
-    // Check if the function name is valid and get the function
-    const f = getFunction(funcname, 2).f;
-    if (!f) {
-        console.error("Invalid function name:", funcname);
+    const func = getFunction(funcname, 2);
+    if (!func) {
+        vizUtils.displayInvalidFunction();
+        Plotly.purge(plot_id);
         return;
     }
+    const f = func.f;
     
+    if (!x0 || !y0) { 
+        vizUtils.displayInvalidInput('x0 or y0');
+        Plotly.purge(plot_id);
+        return;
+    }
+
     let camera = cameraoverride || {
         eye: { x: 1.5, y: 1.5, z: 1.5 } // or your preferred initial view
     };
@@ -233,6 +294,27 @@ export function visualize2d(optimizer) {
     // x0 = [x0, y0], below
     const x0 = [getX0(), getY0()];
 
+    const plot_id = 'plot';
+    const table_body = document.getElementById('optTableBody');
+    table_body.innerHTML = ""; // Clear the previous table content
+
+    const func = getFunction(funcname, 2);
+    if (!func) {
+        vizUtils.displayInvalidFunctionOpti();
+        Plotly.purge(plot_id);
+        return;
+    }
+    const f = func.f;
+
+    if (!x0[0] || !x0[1]) {
+        vizUtils.displayInvalidInput('x0 or y0');
+        Plotly.purge(plot_id);
+        return;
+    }
+
+    const tol = 1e-2;
+    const max_itr = 100;
+
     // Access the step method and length
     let step_method = null, step_length = null;
     if (optimizer !== 'newton'){
@@ -243,15 +325,13 @@ export function visualize2d(optimizer) {
         }
     }
 
-    const plot_id = 'plot';
-    const tol = 1e-2;
-    const max_itr = 100;
-
-    const table_body = document.getElementById('optTableBody');
-    table_body.innerHTML = ""; // Clear the previous table content
-
+    if (!step_length) {
+        vizUtils.displayInvalidInput('stepLength');
+        Plotly.purge(plot_id);
+        return;
+    }
+    
     let plot_name, isConverged, isDiverged;
-    const f = getFunction(funcname, 2).f;
 
     const { X, Y, Z } = vizUtils.get2dPlotData(f, x0);
 
@@ -283,7 +363,7 @@ export function visualize2d(optimizer) {
     }
 
     // Plot data
-    const data = vizUtils.plotly2DInitialData(X, Y, Z, x0, y0, f(x0));
+    const data = vizUtils.plotly2DInitialData(X, Y, Z, x0[0], x0[1], f(x0));
 
     let layout = vizUtils.getLayout(2, plot_name); // 2 is for surface plot in 2d space
 
@@ -342,13 +422,25 @@ export function visualize2d(optimizer) {
 
 export function golden_initial() {
     const funcname = document.getElementById('objectiveSelect').value;
-    const f = getFunction(funcname, 1).f;
     const a0 = getA0();
     const c0 = getC0();
     const plot_id = 'plot';
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = "";
 
+    const func = getFunction(funcname, 1);
+    if (!func) {
+        vizUtils.displayInvalidFunction();
+        Plotly.purge(plot_id);
+        return;
+    }
+    const f = func.f;
+
+    if (a0 === null || c0 === null) {
+        vizUtils.displayInvalidInput('a0 or c0');
+        Plotly.purge(plot_id);
+        return;
+    }
 
     const { X, Y } = vizUtils.get1dPlotData(f, Math.max(Math.abs(a0), Math.abs(c0)) );
 
@@ -365,16 +457,33 @@ export function golden_initial() {
 export function visualize_golden() {
 
     const funcname = document.getElementById('objectiveSelect').value;
-    const f = getFunction(funcname, 1).f;
     const a0 = getA0();
     const c0 = getC0();
     const plot_id = 'plot';
-
-    const max_itr = 100;
-    const [a_all, c_all, num_steps, isConverged, isDiverged] = opti.goldenCutMethod(funcname, a0, c0, 1e-2, max_itr);
-
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = "";
+
+    const func = getFunction(funcname, 1);
+    if (!func) {
+        vizUtils.displayInvalidFunctionOpti();
+        Plotly.purge(plot_id);
+        return;
+    }
+    const f = func.f;
+
+    if (a0 === null || c0 === null) {
+        vizUtils.displayInvalidInput('a0 or c0');
+        Plotly.purge(plot_id);
+        return;
+    }
+
+
+    const max_itr = 100;
+    const tol = 1e-2;
+
+    const [a_all, c_all, num_steps, isConverged, isDiverged] = opti.goldenCutMethod(funcname, a0, c0, tol, max_itr);
+
+    
 
     const { X, Y } = vizUtils.get1dPlotData(f, Math.max(Math.abs(a0), Math.abs(c0)) );
     const yMin = 1.5 * (Math.min(...Y) - 5);
@@ -404,13 +513,26 @@ export function visualize_golden() {
 export function visualize_powell() {
     // ACCESS PARAMETERS FROM HTML
     const funcname = document.getElementById('objectiveSelect').value;
-    const f = getFunction(funcname, 2).f;
     const x0 = getX0();
     const y0 = getY0();
 
     const plot_id = 'plot';
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = ""; // Clear the previous table content
+
+    const func = getFunction(funcname, 2);
+    if (!func) {
+        vizUtils.displayInvalidFunction();
+        Plotly.purge(plot_id);
+        return;
+    }
+    const f = func.f;
+
+    if (x0 === null || y0 === null) {
+        vizUtils.displayInvalidInput('x0 or y0');
+        Plotly.purge(plot_id);
+        return;
+    }
 
     const { X, Y, Z } = vizUtils.get2dPlotData(f, [x0, y0]);
 
@@ -466,14 +588,27 @@ export function visualize_powell() {
 export function visualize_nelder() {
     // ACCESS PARAMETERS FROM HTML
     const funcname = document.getElementById('objectiveSelect').value;
-    const f = getFunction(funcname, 2).f;
     const plot_id = 'plot';
-
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = ""; // Clear the previous table content
 
+    const func = getFunction(funcname, 2);
+    if (!func) {
+        vizUtils.displayInvalidFunctionOpti();
+        Plotly.purge(plot_id);
+        return;
+    }
+    const f = func.f;
+
+
     // Use as coordinates
     const initialVertices = getNelderMeadInputs();
+
+    if (!initialVertices || initialVertices.length !== 3) {
+        vizUtils.displayInvalidInput('Initial Simplex');
+        Plotly.purge(plot_id);
+        return;
+    }
 
     const [simplexes, isConverged, operations] = opti.nelderMead2D(funcname, initialVertices, 1e-2);
 
@@ -505,7 +640,7 @@ export function visualize_nelder() {
         
         // Append the table row with the current step information
         vizUtils.nelderMeadTableRow(table_body, i, simp[0][0], simp[0][1], f([simp[0][0], simp[0][1]]));
-        
+
         if (i == 0) {
             vizUtils.nelderMeadTableRow(table_body, '', simp[1][0], simp[1][1], f([simp[1][0], simp[1][1]]));
         }
@@ -544,18 +679,30 @@ export function visualize_nelder() {
 export function nelder_initial() {
     // ACCESS PARAMETERS FROM HTML
     const funcname = document.getElementById('objectiveSelect').value;
-    const f = getFunction(funcname, 2).f;
+    const func = getFunction(funcname, 2);
     const plot_id = 'plot';
 
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = ""; // Clear the previous table content
 
+    if (!func) {
+        vizUtils.displayInvalidFunction();
+        Plotly.purge(plot_id);
+        return;
+    }
+    const f = func.f;
+
     // Use as coordinates
     const initialVertices = getNelderMeadInputs();
 
+    if (!initialVertices || initialVertices.length !== 3) {
+        vizUtils.displayInvalidInput('Initial Simplex');
+        Plotly.purge(plot_id);
+        return;
+    }
+
    // Create surface
     const { X, Y, Z } = vizUtils.get2dPlotData(f, vizUtils.nelder_max_x0(initialVertices));
-
 
     // Prepare initial data traces
     const firstSimplex = initialVertices;
@@ -575,54 +722,3 @@ export function nelder_initial() {
     Plotly.newPlot(plot_id, data, layout, vizUtils.Config_2D());
 
 }
-
-
-
-
-export function visualize2D_powell_initial(plot_id) {
-
-    const funcname = document.getElementById("objectiveSelect").value;
-    const x0 = getX0();
-    const y0 = getY0();
-
-    const table_body = document.getElementById('optTableBody');
-    table_body.innerHTML = ""; // Clear the previous table content
-
-    // Check if the function name is valid and get the function
-    const f = getFunction(funcname, 2).f;
-    if (!f) {
-        console.error("Invalid function name:", funcname);
-        return;
-    }
-
-    const { X, Y, Z } = vizUtils.get2dPlotData(f, [x0, y0]);
-    const data = [
-        {
-            x: X,
-            y: Y,
-            z: Z,
-            type: 'heatmap',
-            colorscale: 'Viridis',
-            showscale: true,
-            zsmooth: 'best',
-            showlegend: false,
-            opacity: 0.7,
-        },
-        {
-            x: [x0],
-            y: [y0],
-            type: 'scatter',
-            mode: 'markers',
-            marker: { color: 'black', size: 10 },
-            showlegend: false,
-        
-        }
-    ];
-
-    const layout = vizUtils.getLayout(1, 'Function with Initial Guess');
-
-    vizUtils.displayTerminationInitial();
-
-    Plotly.react(plot_id, data, layout, { responsive: true, scrollZoom: true });
-}
-

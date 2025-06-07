@@ -2,6 +2,11 @@ import * as matrixUtils from './matrixUtils.js';
 import * as optiUtils from './optiUtils.js';
 import { getFunction } from './functionUtils.js';
 
+function isComplexValue(x) {
+  return x != null && typeof x.im === 'number';
+}
+
+
 function getStepLengthWrapper(step_method) {
     return function (f, dk, xk, step_length) {
         return optiUtils.getStepLength(step_method, f, dk, xk, step_length);
@@ -53,7 +58,15 @@ function optimize1D(funcname, x0, descentFunc, stepFunc, tol, maxIter, extraPara
         x_all.push(xk); f_all.push(yk);
         x_all.push(null); f_all.push(null);
         x_dot.push(xk); f_dot.push(yk);
-        x_dot.push(xk); f_dot.push(f(xk));
+
+        if (isComplexValue(f(xk))) {
+            // If the function value is complex, we might be diverging
+            console.log("Complex value encountered at xk:", xk, "f(xk):", f(xk));
+            x_dot.push(xk); f_dot.push(NaN);
+        }
+        else{
+            x_dot.push(xk); f_dot.push(f(xk));
+        }
         x_dot.push(null); f_dot.push(null);
 
         gk_old = gk;
@@ -75,11 +88,12 @@ function optimize1D(funcname, x0, descentFunc, stepFunc, tol, maxIter, extraPara
         k++;
     }
 
-    if ((f(xk) - f_old) > 0) {
-        // If the function value increases significantly, we might be diverging
-        isDiverged = true;
-    }
-
+    // if ((f(xk) - f_old) > 0) {
+    //     // If the function value increases significantly, we might be diverging
+    //     isDiverged = true;
+    // }
+    console.log("xk:", xk, "f(xk):", f(xk));
+    
     return [x_all, f_all, x_dot, f_dot, isConverged, isDiverged];
 }
 
