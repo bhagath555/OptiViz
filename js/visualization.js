@@ -1,17 +1,7 @@
-import { getFunction, showError } from './functionUtils.js';
+import { getFunction } from './functionUtils.js';
 import * as opti from './optimization.js'
 import * as vizUtils from './vizUtils.js';
 
-export function validateFunctionFor1srtOrder(func) {
-    if (func) {
-        if (!func.f){
-            showError( 'Function error', 'Function is not valid');
-        }
-    }
-    else {
-        showError( 'Function error', 'Function is not valid');
-    }
-}
 
 export function getNelderMeadInputs() {
     const x1 = parseFloat(document.getElementById('x1').value);
