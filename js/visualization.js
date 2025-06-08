@@ -129,7 +129,7 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
     }
 
     // Validate step length
-    if (!step_length) {
+    if (!step_length && step_method === 'constant') {
         vizUtils.displayInvalidInput('stepLength');
         Plotly.purge(plot_id);
         return;
@@ -315,7 +315,8 @@ export function visualize2d(optimizer) {
         }
     }
 
-    if (!step_length) {
+    // Validate step length
+    if (!step_length && step_method === 'constant') {
         vizUtils.displayInvalidInput('stepLength');
         Plotly.purge(plot_id);
         return;

@@ -31,6 +31,15 @@
     <script src="../js/navbar.js"></script>
     <script type="module" src="../js/page.js"></script>
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7L5N95HL3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-F7L5N95HL3');
+    </script>
 </head>
 
 <!-- Main content and body of the page -->
@@ -125,12 +134,17 @@
     <div class="container mx-5, my-5">
 
         <h1 class="fw-bold mb-3 text-primary">Conjugate Gradient Method</h1>
-
+        <p>
+            Conjugate gradient method is also an iterative first-order optimization algorithm used to find the minimum of a function. 
+            While steepest descent method uses the gradient direction at current iteration, conjugate gradient method takes into account the previous iterations to find a more optimal direction. This method is particularly improves the fast convergence of the algorithm.
+        </p>
 
         <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
-        <p> The idea of conjugate gradient method is to use the current gradient \(\nabla f(x_k)\) and gradients from
-            the previous iteration \(d_k\) to compute the next step descent direction.</p>
-        <p> \[ d_{k+1} = - \nabla f(x_k) + \beta_k d_k \]</p>
+        <P> Consider a function \( f: \mathbb{R}^n \rightarrow \mathbb{R} \) with \( x \) as the input variable, \( \nabla f(x) \) as the gradient, and \( x_0 \) is the initial guess to the optimization problem. For the first iteration the input variable \(x = x_0\) is updated to \(x = x_1\) using below formula:</P>
+        <p> \[ x_1 = x_0 - t_0 \nabla f(x_0) \]</p>
+        here, \(t_0\) is the step length, and \(t_0 \nabla f(x_0)\) is the descent direction. For the next iteration, the input variable \(x\) is updated to \(x_2\) using the formula:</p>
+        <p> The conjugate gradient method updates the current point using the formula:</p>
+        <p> \[ d_{k} = - \nabla f(x_{k-1}) + \beta_k d_{k-2} \]</p>
 
 
         <h4 class="fw-bold mb-3 text-primary">2. Beta Computation/Method</h4>

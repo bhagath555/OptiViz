@@ -33,7 +33,15 @@
     <script src="../js/navbar.js"></script>
     <script type="module" src="../js/page.js"></script>
 
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F7L5N95HL3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
+        gtag('config', 'G-F7L5N95HL3');
+    </script>
 </head>
 
 <!-- Main content and body of the page -->
@@ -119,10 +127,7 @@
         <h1 class="fw-bold mb-3 text-primary">Steepest Descent Method</h1>
 
         <p>
-            The <strong>Steepest Descent</strong> (also known as <em>Gradient Descent</em>) method is one of the most
-            fundamental algorithms in optimization. The basic idea of this method is to move in the direction of the
-            steepest descent of the function, which is given by the negative of the gradient vector.
-            The steepest descent method guarantees convergence to a local minimum for convex functions.
+            The <strong>Steepest Descent</strong> (also known as <em>Gradient Descent</em>) method is one of the simplest \(1^{st} \) order optimization algorithms. In order to find the optimal solution of a function, this method calculates the first derivative of the function. 
         </p>
 
         <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
@@ -132,20 +137,20 @@
         <p>
             Consider a function \(f: \mathbb{R}^n \to \mathbb{R}\) that is differentiable, and let \(x_0\) be the
             initial guess.
-            The steepest descent method iteratively updates the current point \(x_0\) using the formula:
+            The steepest descent method iteratively updates the prior point.
+            For the first iteration the update is done using the formula:
             \[
-            x_{1} = x_0 - t_k \nabla f(x_0)
+            x_{1} = x_0 - t_0 \nabla f(x_0)
             \]
-            where \(t_k\) is the step size (or learning rate) at iteration \(k\), and \(\nabla f(x_0)\) is the
+            where \(t_0\) is the step size (or learning rate) at iteration \(1\), and \(\nabla f(x_0)\) is the
             gradient of \(f\) at \(x_0\).
         </p>
         <p>
             For \(k^{th}\) iteration, the update rule becomes:
             \[
-            x_{k+1} = x_k - t_k \nabla f(x_k)
+            x_{k} = x_{k-1} - t_k \nabla f(x_{k-1})
             \]
-            The process continues until convergence, which is typically defined as when the change in the function value
-            or the change in the point \(x\) is below a certain threshold.
+            The iterative process continues until predefined convergence criteria is met. Typical convergence criteria include: If change in function values between iterations is less than a predefined threshold \(\varepsilon\), change in the input value between iterations is small, or if the gradient is close to zero, i.e., \(|\nabla f(x_k)| < \varepsilon\).
 
         </p>
         <p>
@@ -207,10 +212,8 @@
 
         <h4 class="fw-bold mb-3 text-primary">5. Discussion</h4>
         <p>
-            The steepest descent method is a simple and effective algorithm for optimization. For a convex function, it
-            guarantees convergence to a local minimum. However, the choice of step length and line search method can
-            significantly affect the convergence rate. In practice, more advanced methods like the Conjugate Gradient
-            method are often preferred for large-scale problems.
+            The steepest descent method is a simple and effective 1st derivative optimization algorithm. For differentiable functions, it always converges to a local minimum under appropriate choice of step length. However, the choice of step length and line search method can
+            significantly affect the convergence rate.
         </p>
         <h4 class="fw-bold mb-3 text-primary">6. References</h4>
     </div>
