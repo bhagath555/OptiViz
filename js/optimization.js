@@ -352,7 +352,7 @@ export function lmm2D(funcname, step_method, x0, step_length = 0.1, alpha, tol, 
 
 // ---------------------- Powell Method ----------------------
 
-function goldenCut2DHelper(funcname, fixedIndex, fixedValue, tol, a0 = -5, c0 = 5) {
+function goldenCut2DHelper(funcname, fixedIndex, fixedValue, tol, a0, c0) {
     const f = getFunction(funcname, 2).f;
     const m = 0.382; // Golden ratio constant
     let a = a0, c = c0;
@@ -375,6 +375,12 @@ function goldenCut2DHelper(funcname, fixedIndex, fixedValue, tol, a0 = -5, c0 = 
 }
 
 export function powellMethod(funcname, x0, tol) {
+
+    // x0 is inital guess.
+    // Powell algorithm requires interval in which to search for the minimum.
+    const x_range = Math.abs(x0[0]) < 1 ? 5 : 2 * Math.abs(x0[0]);
+    const y_range = Math.abs(x0[1]) < 1 ? 5 : 2 * Math.abs(x0[1]);
+
     const f = getFunction(funcname, 2).f;
     let x = [...x0];
     let fk = 0;
@@ -386,7 +392,7 @@ export function powellMethod(funcname, x0, tol) {
     while (step < 100) {
         fk = f(x);
         // ---------------First direction optimization-------------
-        x[0] = goldenCut2DHelper(funcname, 0, x[1], tol);
+        x[0] = goldenCut2DHelper(funcname, 0, x[1], tol, -x_range, x_range);
         path.push([...x]);
         step++;
         // First direction optimization check
@@ -404,7 +410,7 @@ export function powellMethod(funcname, x0, tol) {
         
         // --------------Second direction optimization---------------
         fk = fk_new;
-        x[1] = goldenCut2DHelper(funcname, 1, x[0], tol);
+        x[1] = goldenCut2DHelper(funcname, 1, x[0], tol, -y_range, y_range);
         path.push([...x]);
         step++;
         fk_new = f(x);
