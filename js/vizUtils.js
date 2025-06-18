@@ -82,8 +82,7 @@ export function displayInvalidFunctionOpti(message){
 export function displayInvalidInput(message){
     const Termination = document.getElementById('termination');
     Termination.innerHTML = `Invalid input - ${message}.
-    </br> please check the input values.
-    </br> Can't perform optimization`;
+    </br> please check the input values.`;
     Termination.style.color = "red";
 }
 

@@ -10,8 +10,10 @@ export function getNelderMeadInputs() {
     const y2 = parseFloat(document.getElementById('y2').value);
     const x3 = parseFloat(document.getElementById('x3').value);
     const y3 = parseFloat(document.getElementById('y3').value);
-
+    
+    console.log('x1', x1)
     if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2) || isNaN(x3) || isNaN(y3)) {
+        vizUtils.displayInvalidInput('Initial Simplex');
         return null;
     }
 
@@ -26,33 +28,40 @@ export function simplexToXYZ(simplex, f) {
 }
 
 export function getX0(){
-    return getNumericInput('x0', 3);
+    return getNumericInput('x0');
 }
 
 export function getY0(){
-    return getNumericInput('y0', 2);
+    return getNumericInput('y0');
 }
 
 export function getA0(){
-    return getNumericInput('a0', -4);
+    return getNumericInput('a0');
 }
 
 export function getC0(){
-    return getNumericInput('c0', 4);
+    return getNumericInput('c0');
 }
 
 export function getStepLengthValue(){
-    return getNumericInput('stepLength', 0.1);
+    return getNumericInput('stepLength');
 }
 
 export function getNumericInput(id) {
+    console.log('-------------------');
     const el = document.getElementById(id);
-    if (!el) return null;
+    console.log('Element:', el.value);
+    if (!el || el.value === '') {
+        console.log('in first if');
+        return null;
+    }
     const val = parseFloat(el.value);
+    
     if (isNaN(val)) {
         console.warn(`Invalid numeric input for ${id}:`, el.value);
         return null;
     }
+
     return val;
 }
 
@@ -79,7 +88,7 @@ export function visualize1D_initial(plot_id, x_min = -10, x_max = 10) {
 
     const f = func.f;
 
-    if (!x0) {
+    if (x0 == null) {
         vizUtils.displayInvalidInput('x0');
         Plotly.purge(plot_id);
         return;
@@ -104,7 +113,7 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = ""; // Clear the previous table content
 
-    if (!x0) {
+    if (x0 == null) {
         vizUtils.displayInvalidInput('x0');
         Plotly.purge(plot_id);
         return;
@@ -129,7 +138,7 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
     }
 
     // Validate step length
-    if (!step_length && step_method === 'constant') {
+    if (step_length == null && step_method === 'constant') {
         vizUtils.displayInvalidInput('stepLength');
         Plotly.purge(plot_id);
         return;
@@ -246,8 +255,8 @@ export function visualize2D_initial(plot_id, cameraoverride = null) {
         return;
     }
     const f = func.f;
-    
-    if (!x0 || !y0) { 
+
+    if (x0 == null || y0 == null) {
         vizUtils.displayInvalidInput('x0 or y0');
         Plotly.purge(plot_id);
         return;
@@ -296,7 +305,7 @@ export function visualize2d(optimizer) {
     }
     const f = func.f;
 
-    if (!x0[0] || !x0[1]) {
+    if (x0 == null || y0 == null) {
         vizUtils.displayInvalidInput('x0 or y0');
         Plotly.purge(plot_id);
         return;
@@ -316,7 +325,7 @@ export function visualize2d(optimizer) {
     }
 
     // Validate step length
-    if (!step_length && step_method === 'constant') {
+    if (step_length == null && step_method === 'constant') {
         vizUtils.displayInvalidInput('stepLength');
         Plotly.purge(plot_id);
         return;
@@ -427,7 +436,7 @@ export function golden_initial() {
     }
     const f = func.f;
 
-    if (a0 === null || c0 === null) {
+    if (a0 == null || c0 == null) {
         vizUtils.displayInvalidInput('a0 or c0');
         Plotly.purge(plot_id);
         return;
@@ -462,7 +471,7 @@ export function visualize_golden() {
     }
     const f = func.f;
 
-    if (a0 === null || c0 === null) {
+    if (a0 == null || c0 == null) {
         vizUtils.displayInvalidInput('a0 or c0');
         Plotly.purge(plot_id);
         return;
@@ -473,8 +482,6 @@ export function visualize_golden() {
     const tol = 1e-2;
 
     const [a_all, c_all, num_steps, isConverged, isDiverged] = opti.goldenCutMethod(funcname, a0, c0, tol, max_itr);
-
-    
 
     const { X, Y } = vizUtils.get1dPlotData(f, Math.max(Math.abs(a0), Math.abs(c0)) );
     const yMin = 1.5 * (Math.min(...Y) - 5);
@@ -519,7 +526,7 @@ export function visualize_powell() {
     }
     const f = func.f;
 
-    if (x0 === null || y0 === null) {
+    if (x0 == null || y0 == null) {
         vizUtils.displayInvalidInput('x0 or y0');
         Plotly.purge(plot_id);
         return;
@@ -595,7 +602,7 @@ export function visualize_nelder() {
     // Use as coordinates
     const initialVertices = getNelderMeadInputs();
 
-    if (!initialVertices || initialVertices.length !== 3) {
+    if (initialVertices == null || initialVertices.length !== 3) {
         vizUtils.displayInvalidInput('Initial Simplex');
         Plotly.purge(plot_id);
         return;
@@ -686,7 +693,7 @@ export function nelder_initial() {
     // Use as coordinates
     const initialVertices = getNelderMeadInputs();
 
-    if (!initialVertices || initialVertices.length !== 3) {
+    if (initialVertices == null || initialVertices.length !== 3) {
         vizUtils.displayInvalidInput('Initial Simplex');
         Plotly.purge(plot_id);
         return;

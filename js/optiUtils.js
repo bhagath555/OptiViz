@@ -22,14 +22,14 @@ export function armijoLineSearch(f, dk, xk, beta = 0.5, sigma = 0.5) {
 
     // 2D case (vector input)
     if (isVector) {
-        gradDotDir = matrixUtils.Vecdot(matrixUtils.Vecscale(dk, -1), dk);
-        xNew = matrixUtils.Vecadd(xk, matrixUtils.Vecscale(dk, tk));
+        gradDotDir = matrixUtils.vectorDot(matrixUtils.vectorScale(dk, -1), dk);
+        xNew = matrixUtils.vectorAdd(xk, matrixUtils.vectorScale(dk, tk));
         f_new = f(xNew);
         f_appr = fk + sigma * tk * gradDotDir;
 
         while (f_new > f_appr) {
             tk *= beta;
-            xNew = matrixUtils.Vecadd(xk, matrixUtils.Vecscale(dk, tk));
+            xNew = matrixUtils.vectorAdd(xk, matrixUtils.vectorScale(dk, tk));
             f_new = f(xNew);
             f_appr = fk + sigma * tk * gradDotDir;
         }

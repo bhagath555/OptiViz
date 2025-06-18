@@ -84,14 +84,21 @@ function optimize1D(funcname, x0, descentFunc, stepFunc, tol, maxIter, extraPara
             break;
         }
 
+        if ( (Math.abs(f(xk) - f_old) < tol) ) {
+            // If the function value does not change significantly, we can stop
+            isConverged = true;
+            break;
+        }
 
         k++;
     }
 
-    // if ((f(xk) - f_old) > 0) {
-    //     // If the function value increases significantly, we might be diverging
-    //     isDiverged = true;
-    // }
+    if ( (k >= maxIter) && (f(xk) - f_old) > 0) {
+        // If the function value increases significantly, we might be diverging
+        isDiverged = true;
+    }
+
+
     console.log("xk:", xk, "f(xk):", f(xk));
     
     return [x_all, f_all, x_dot, f_dot, isConverged, isDiverged];
@@ -229,6 +236,7 @@ function optimize2D(funcname, x0, descentFunc, stepFunc, tol, maxIter = 100, ext
     let isDiverged = false;
 
     while (k < maxIter) {
+        console.log(`Iteration ${k}`);
         f_old = f(xk);
         [x_old, y_old] = xk;
 
@@ -272,10 +280,15 @@ function optimize2D(funcname, x0, descentFunc, stepFunc, tol, maxIter = 100, ext
             isConverged = true;
             break;
         }
+
+        if ( (Math.abs(f(xk) - f_old) < tol) )  {
+            isConverged = true;
+            break;
+        }
         k++;
     }
 
-    if ((f(xk) - f_old) > 0) {
+    if ( (k >= maxIter) && (f(xk) - f_old) > 0) {
         // If the function value increases significantly, we might be diverging
         isDiverged = true;
     }
@@ -299,7 +312,7 @@ export function steepestDescent2D(funcname, step_method, x0, step_length = 0.1, 
 function descentCG2D(f, g, h, xk, gk, gk_old, dk_old, k, extra) {
     if (k === 0 || !gk_old || !dk_old) return gk.map(v => -v);
     const beta = optiUtils.computeBeta2D(extra.beta_method, gk, gk_old, dk_old);
-    return vectorAdd(vectorScale(gk, -1), vectorScale(dk_old, beta));
+    return matrixUtils.vectorAdd(matrixUtils.vectorScale(gk, -1), matrixUtils.vectorScale(dk_old, beta));
 }
 
 export function conjugateGradient2D(funcname, step_method, beta_method, x0, step_length = 0.1, tol, max_itr) {

@@ -76,7 +76,11 @@ export function vectorNorm(v) {
  * @returns {number} Squared norm
  */
 export function vectorNormSquared(v) {
-    return v.reduce((sum, val) => sum + val * val, 0);
+    let sum = 0;
+    for (let i = 0; i < v.length; i++) {
+        sum += v[i] * v[i];
+    }
+    return sum;
 }
 
 /**
