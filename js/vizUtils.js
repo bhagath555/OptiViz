@@ -252,11 +252,11 @@ export function createGoldenSectionData(f, X, Y, a, c, yMin, yMax) {
     const lower_bound_color = '#ff9900';
     const upper_bound_color = 'red';
     return [
-        createLineTrace1D(X, Y, line_color, 2),
+        createLineTrace1D(X, Y, 'lines', line_color, 2),
         createMarkerTrace1D([a], [f(a)], lower_bound_color, 8),
         createMarkerTrace1D([c], [f(c)], upper_bound_color, 8),
-        createLineTrace1D([a, a], [yMin, yMax], lower_bound_color, 2, 'dot'),
-        createLineTrace1D([c, c], [yMin, yMax], upper_bound_color, 2, 'dot')
+        createLineTrace1D([a, a], [yMin, yMax], 'lines', lower_bound_color, 2, 'dot'),
+        createLineTrace1D([c, c], [yMin, yMax], 'lines', upper_bound_color, 2, 'dot')
     ];
 }
 
