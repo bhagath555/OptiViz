@@ -87,14 +87,32 @@ function initBootstrapNavbar() {
     spacer.className = 'nav-item ms-auto'; // pushes next item to right
     navbarList.appendChild(spacer);
 
-    // Create Contact tab
+	// ----- Create the blogs tab
+	const blogsLi = document.createElement('li');
+	blogsLi.className = 'nav-item';
+
+	const blogsA = document.createElement('a');
+	blogsA.className = 'nav-link';
+	blogsA.textContent = 'Blogs';
+	blogsA.href = prefix + 'html/blogs.html'; 
+
+	 if (currentPage === 'blogs.html') {
+		blogsA.classList.add('active');
+		blogsA.setAttribute('aria-current', 'page');
+	  }
+	blogsLi.appendChild(blogsA);
+
+	// Append Blogs tab to the navbar
+	navbarList.appendChild(blogsLi);
+
+    // ----- Create Contact tab
     const contactLi = document.createElement('li');
     contactLi.className = 'nav-item';
 
     const contactA = document.createElement('a');
     contactA.className = 'nav-link';
     contactA.textContent = 'Contact';
-    contactA.href = prefix + 'contact.html'; // adjust if needed
+    contactA.href = prefix + 'contact.html'; 
 
     if (currentPage === 'contact.html') {
         contactA.classList.add('active');
@@ -102,6 +120,8 @@ function initBootstrapNavbar() {
     }
 
     contactLi.appendChild(contactA);
+
+	// Append Contact tab to the navbar
     navbarList.appendChild(contactLi);
 }
 
