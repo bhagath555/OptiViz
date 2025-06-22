@@ -12,7 +12,7 @@
 
     <!-- Math for Symbolic expressions -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
-    
+
     <!-- Plotly.js for plotting -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
@@ -48,7 +48,7 @@
 
     <!-- Navbar -->
     <div id="navbar-container"></div>
-    
+
     <!-- Input parameter -->
     <div class="container-fluid px-0 pt-2 pb-1">
         <form id="ParameterForm" class="bg-white rounded shadow px-4 py-2">
@@ -150,166 +150,91 @@
     <div class="container mx-5, my-5">
         <h1 class="fw-bold mb-3 text-primary">Nelder–Mead Method</h1>
 
-            <p>
-                The <strong>Nelder–Mead Method</strong> is a popular derivative-free optimization algorithm used to find the
-                minimum of a scalar-valued function in multidimensional space. It is based on the concept of a <strong>simplex</strong> and
-                uses geometrical transformations to iteratively improve the solution. This method is available in MATLAB as <code>fminsearch</code>.
-            </p>
+        <p>
+            The <strong>Nelder–Mead Method</strong> is a popular derivative-free optimization algorithm used to find the
+            minimum of a scalar-valued function in multidimensional space. It is based on the concept of a
+            <strong>simplex</strong> and uses geometrical transformations of the points in simplex to iteratively
+            improve the solution. This method is available in MATLAB as <code>fminsearch</code> function.
+        </p>
 
-            <h4 class="fw-bold mb-3 text-primary">1. Motivation</h4>
-            <p>
-                Many real-world problems involve objective functions that are non-differentiable, noisy, or costly to evaluate.
-                The Nelder–Mead method provides an efficient way to handle such problems without requiring gradients. It evaluated the function at initial points and iteratively converges to point with minimum function value.
-            </p>
 
-            <h4 class="fw-bold mb-3 text-primary">2. The Simplex</h4>
-            <p>
-                Lets first define what is simplex. In \( \mathbb{R}^n \) dimensional space, \(n+1\) points form a simplex. 
-                For example:
-                <ul>
-                    <li>In 1D: a line segment (2 points)</li>
-                    <li>In 2D: a triangle (3 points)</li>
-                    <li>In 3D: a tetrahedron (4 points)</li>
-                </ul>
-                At each iteration, the coordinates of the simplex are transformed to move toward regions of lower function values.
-            </p>
+        <h4 class="fw-bold mb-3 text-primary">2. The Simplex</h4>
 
-            <p>Given an objective function:</p>
-            <p>\[ f: \mathbb{R}^{n} \rightarrow \mathbb{R} \]</p>
-            <p>We start with an n-dimensional simplex consisting of \( n + 1 \) vertices:</p>
-            <p>\[ X_{1}, X_{2}, \dots, X_{n+1} \quad \text{where each } X_{i} \in \mathbb{R}^{n} \]</p>
-            <p>Evaluate the function at each vertex:</p>
-            <p>\[ f(X_{1}), f(X_{2}), \dots, f(X_{n+1}) \]</p>
+        <p>
+            Lets first define what is simplex. In \( \mathbb{R}^n \) dimensional space, \(n+1\) points form a simplex.
+            For example:
+        <ul>
+            <li>In 1D: a line segment (2 points)</li>
+            <li>In 2D: a triangle (3 points)</li>
+            <li>In 3D: a tetrahedron (4 points)</li>
+        </ul>
+        Along with objective function, the initial coordinates of the simplex are provided as input to the algorithm.
+        The algorithm iteratively refines these points to find the minimum of the objective function. In this process,
+        in intial simples transformed into new coordinates based on function value at each vertex of the simplex.
+        </p>
 
-            <h4 class="fw-bold mb-3 text-primary">3. Methodology</h4>
-            <img src="../docs/Nm_1.svg" alt="Descriptive Alt" class="img-fluid float-end me-3 mb-3 rounded shadow"
+        <h4 class="fw-bold mb-3 text-primary">3. Method</h4>
+
+        <p>Lets consider a objective function \(f(\boldsymbol{X}) \) with \( \boldsymbol{X} \in \mathbb{R}^{n} \) as
+            inputs.</p>
+        <p>\[ f: \mathbb{R}^{n} \rightarrow \mathbb{R} \]</p>
+
+        <p> As mentioned earlier, for \(n\)-dimensional function, a simplex is defined by \(n+1\) points. The algorithm
+            starts with an initial simplex defined by these points, which are the vertices of the simplex. For two
+            dimesional function \(n=2\) and the simplex is a triangle</p>
+
+        <p>For \(\mathbb{R}^{n}\) input space, lets define the intial \(n+1\) simplex vertices \(\{\boldsymbol{X}_1,
+            \boldsymbol{X}_2, ... , \boldsymbol{X}_{n+1}\}\)</p>
+
+        <p>Evaluate the function at each vertex and sort them according to their function value</p>
+        <p>\[ f(\boldsymbol{X}_{1}) < f(\boldsymbol{X}_{2}) < ... < f(\boldsymbol{X}_{n+1}) \]</p>
+
+                <p>
+                    The point with lowest function values is considered as the best point \(\boldsymbol{X}_{1}\) and the
+                    point with highest function value, is considered as the worst point \(\boldsymbol{X}_{n+1}\). In
+                    order to transform the vertices of the simplex to new optimal coordinates, the algorithm first need
+                    to calculate the centroid \( \boldsymbol{\bar{X}} \) of first \(n\) points.
+                </p>
+
+                <p>
+                    \[
+                    \boldsymbol{\bar{X}} = \frac{1}{n} \sum_{i=1}^{n} \boldsymbol{X}_i
+                    \]
+                </p>
+
+                New coordinate for simplex is calculated as below:
+                <p>
+                    \[
+                    \boldsymbol{X}(\mu) = (1+\mu) \boldsymbol{\bar{X}} - \mu \boldsymbol{X}_{n+1}
+                    \]
+                </p>
+
+                <p>
+                    The worst point will be transformed to the new coordinate. The choice of \(\mu\) determines
+                    transformation types.
+                </p>
+        </p><img src="../docs/Nm_1.svg" alt="Descriptive Alt" class="img-fluid float-end me-3 m-3 rounded shadow"
             style="width: 500px;">
-            <p>
-                After initializing the simplex with \( n+1 \) points, the function values at these points are evaluated and sorted in ascending order.
-                In order to move towards the minimum, the algorithm performs a series of transformations to the point with the highest function value (the worst point) 
-                based on the function values of the other points (the best and average points).
-    
-            <ul>
-                <li><strong>Reflection:</strong> Reflect the worst point across the centroid of the remaining points.</li>
-                <li><strong>Expansion:</strong> If reflection improves the function significantly, expand further in that direction.</li>
-                <li><strong>Contraction:</strong> If reflection fails, try contracting toward the centroid.</li>
-                <li><strong>Shrinkage:</strong> If contraction fails, shrink the entire simplex toward the best point.</li>
-            </ul>
+        <ol>
+            <li>In ordered to perform <strong>inner contraction</strong> \( -1 < \mu < 0 \)</li>
+            <li>In order to perform <strong>outer contraction</strong> \( 0 < \mu < 1 \)</li>
+            <li>In order to perform <strong>reflection</strong> \( \mu = 1 \)</li>
+            <li>In order to perform <strong>expansion</strong> \( \mu > 1 \)</li>
+        </ol>
 
-            <h4 class="fw-bold mb-3 text-primary">4. Reflection Formula</h4>
-            <p>
-                Let \( \mathbf{x}_h \) be the worst point, and \( \bar{\mathbf{x}} \) be the centroid of the other points.
-                The reflected point \( \mathbf{x}_r \) is given by:
-            </p>
-    
-            <div>
-                \[
-                \mathbf{x}_r = \bar{\mathbf{x}} + \alpha (\bar{\mathbf{x}} - \mathbf{x}_h)
-                \]
-            </div>
-    
-            <p>
-                where \( \alpha > 0 \) is the reflection coefficient (commonly \( \alpha = 1 \)).
-            </p>
+        <p>If all the above transformation fails to reach the optimal solution, then all the points move towards the
+            best point, which is called shrinkage. All these operations for a 2D objective function are illustrated in
+            the figure below.</p>
 
-            <h4 class="fw-bold mb-3 text-primary">5. Expansion and Contraction</h4>
+        <p>
+            The function value at the best point of updated simplex will be computed and compared with the previous best
+            point. If the difference between the point is less than a predefined threshold \(\varepsilon\), the
+            algorithm terminates. Otherwise, new iteration starts with the updated simplex vertices.
+        </p>
 
-            <p><strong>Expansion (if reflection is good):</strong></p>
-            <div>
-                \[
-                \mathbf{x}_e = \bar{\mathbf{x}} + \gamma (\mathbf{x}_r - \bar{\mathbf{x}}), \quad \gamma > 1
-                \]
-            </div>
-    
-            <p><strong>Contraction (if reflection is bad):</strong></p>
-            <div>
-                \[
-                \mathbf{x}_c = \bar{\mathbf{x}} + \rho (\mathbf{x}_h - \bar{\mathbf{x}}), \quad 0 < \rho < 1
-                \]
-            </div>
-    
-            <p><strong>Shrink (if all else fails):</strong> move all points toward the best point.</p>
+        <h4 class="fw-bold mb-3 text-primary">4. Algorithm</h4>
 
-            <h4 class="fw-bold mb-3 text-primary">6. Stopping Criteria</h4>
-            <p>
-                The method terminates when the function values at the simplex vertices are close to each other:
-            </p>
-    
-            <div>
-                \[
-                \max_i |f(\mathbf{x}_i) - f(\mathbf{x}_\text{best})| < \varepsilon
-                \]
-            </div>
-    
-            <p>
-                or when the simplex becomes sufficiently small in size.
-            </p>
-
-            <h2>7. Transformation Summary</h2>
-<table>
-    <tr>
-        <th>Transformation</th>
-        <th>Formula</th>
-        <th>Typical Parameter</th>
-    </tr>
-    <tr>
-        <td>Reflection</td>
-        <td>\(\bar{X} + \alpha(\bar{X} - X_{n+1})\)</td>
-        <td>\(\alpha = 1\)</td>
-    </tr>
-    <tr>
-        <td>Expansion</td>
-        <td>\(\bar{X} + \gamma(X_{r} - \bar{X})\)</td>
-        <td>\(\gamma = 2\)</td>
-    </tr>
-    <tr>
-        <td>Outside Contraction</td>
-        <td>\(\bar{X} + \rho(X_{r} - \bar{X})\)</td>
-        <td>\(\rho = 0.5\)</td>
-    </tr>
-    <tr>
-        <td>Inside Contraction</td>
-        <td>\(\bar{X} - \rho(\bar{X} - X_{n+1})\)</td>
-        <td>\(\rho = 0.5\)</td>
-    </tr>
-    <tr>
-        <td>Shrink</td>
-        <td>\(X_{1} + \sigma(X_{i} - X_{1})\)</td>
-        <td>\(\sigma = 0.5\)</td>
-    </tr>
-</table>
-
-            <h4 class="fw-bold mb-3 text-primary">7. Discussions</h4>
-            <p> Advantages of the Nelder–Mead method include:
-                <ul>
-                    <li>Simple to implement and requires minimal memory</li>
-                    <li>Works well for low-dimensional problems (typically \( n \leq 10 \))</li>
-                    <li>Does not require derivative information, making it suitable for noisy or discontinuous functions</li>
-                </ul>
-            </p>
-            <p> Disadvantages include:
-                <ul>
-                    <li>Can be inefficient for high-dimensional problems</li>
-                    <li>May converge to local minima or stagnate in flat regions</li>
-                    <li>Not suitable for functions with many local minima</li>
-                </ul>
-            </p>
-
-
-            <h4 class="fw-bold mb-3 text-primary">9. Applications</h4>
-            <p>
-                The Nelder–Mead method is widely used in:
-                <ul>
-                    <li>Parameter tuning and calibration problems</li>
-                    <li>Engineering and physics simulations</li>
-                    <li>Econometrics and financial modeling</li>
-                    <li>Nonlinear curve fitting and black-box optimization</li>
-                </ul>
-            </p>
-    
     </div>
-    
-
 
 
 </body>

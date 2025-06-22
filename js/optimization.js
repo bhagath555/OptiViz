@@ -84,7 +84,7 @@ function optimize1D(funcname, x0, descentFunc, stepFunc, tol, maxIter, extraPara
             break;
         }
 
-        if ( (Math.abs(f(xk) - f_old) < tol) ) {
+        if ( (Math.abs(f(xk) - f_old) < tol * tol) ) {
             // If the function value does not change significantly, we can stop
             isConverged = true;
             break;
@@ -281,7 +281,7 @@ function optimize2D(funcname, x0, descentFunc, stepFunc, tol, maxIter = 100, ext
             break;
         }
 
-        if ( (Math.abs(f(xk) - f_old) < tol) )  {
+        if ( (Math.abs(f(xk) - f_old) < tol * tol) )  {
             isConverged = true;
             break;
         }

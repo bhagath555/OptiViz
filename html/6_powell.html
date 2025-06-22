@@ -12,11 +12,11 @@
 
     <!-- Math for Symbolic expressions -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
-    
+
     <!-- Plotly.js for plotting -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
-    
+
     <!-- MathJax for rendering LaTeX math -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -66,11 +66,11 @@
                 <!-- Initial y₀ -->
                 <div id="y0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
                 </div>
- 
+
                 <!-- Calculate Button -->
                 <div id="calculate_container" class="col-12 col-md-auto d-flex align-items-center">
                 </div>
-                
+
             </div>
         </form>
     </div>
@@ -111,73 +111,75 @@
 
 
     <div class="container mx-5, my-5">
-    
-            <h1 class="fw-bold mb-3 text-primary">Powell Method</h1>
-    
-            <p>
-                <strong>Powell’s Method</strong> is a derivative-free optimization algorithm designed to minimize a
-                multivariable function without computing gradients. It applies a sequence of one-dimensional minimizations (golden cut) along a set of parameter directions, iteratively refining the solution.
-            </p>
 
-            <h4 class="fw-bold mb-3 text-primary">2. Method</h4>
-            <p>
-                The algorithm proceeds by iteratively minimizing the function along a set of **conjugate directions**. At each
-                iteration, Powell:
+        <h1 class="fw-bold mb-3 text-primary">Powell Method</h1>
+
+        <p>
+            <strong>Powell’s Method</strong> is a derivative-free optimization algorithm designed to minimize a
+            multivariable function without computing gradients. It applies a sequence of one-dimensional minimizations
+            (golden cut) along a set of parameter directions, iteratively refining the solution. It is an extension of
+            the golden cut method to multiple dimensions.
+        </p>
+
+        <h4 class="fw-bold mb-3 text-primary">2. Method</h4>
+        <p>
+            Consider a function \( f: \mathbb{R}^n \to \mathbb{R} \) that we want to minimize. As every optimization
+            method, Powell's method also requires an initial guess \( X_0 \). The dimension of input space is \( n \),
+            and the initial guess \(X_0 \) is a vector in \( \mathbb{R}^n \). Powell method minimizes the function \( f
+            \) by individually minizing the function along one parameter direction at a time. The sequenctial
+            minimization in each parameter direction continues until the convergence criteria are met.
+
+        </p>
+
+        <h4 class="fw-bold mb-3 text-primary">3. Algorithm</h4>
+
+        <p>
+            In order to understnad the powell algorithm well, 2 dimensional function is considered. The prametric directions are \(x\) and \(y\). The algorithm can be generalized to higher dimensions by adding more parameter directions. Let assume that at certain iteration \(k\), the current point is \(X_k = [x_k, y_k]\). While optimizing the function value in direction \(x\), the algorithm found an optimal value, \(x^*\) the optimal point is updated to \(X_{k+1} = [x^*, y_k]\). Then the algorithm optimizes the function value in direction \(y\) with the updated point \(X_{k+1}\). The precess continuous until the convergence criteria are met or the maximum number of iterations is reached. The algorithm can be summarized as follows:
+        </p>
+
+        <ol>
+            <li><strong>Initialize:</strong>
                 <ul>
-                    <li>Performs a sequence of 1D line minimizations along each direction</li>
-                    <li>Updates the directions based on the change in position</li>
-                    <li>Searches along a newly constructed direction that captures combined progress</li>
+                    <li>Define the initial point \( X_0 = [x_0, y_0] \) and the function \( f(X) \).</li>
+                    <li>Determine search intervals along each axis based on the magnitude of \( x_0 \):</li>
+                    <li>Define number of iterations \( max\_iter \) and tolerance level \( \epsilon \).</li>
                 </ul>
-            </p>
-
-            <h4 class="fw-bold mb-3 text-primary">3. Algorithm</h4>
-
-            <p>
-                The Powell method can be summarized in the following steps:
-                <ol>
-                    <li>Initialize the starting point and direction vectors.</li>
-                    <li>For each iteration:
+            </li>
+            <li><strong>Iterate \(k\) ( \( max\_iter \) steps):</strong>
+                <ul>
+                    <li>Evaluate the function value \( f_k = f(X) \).</li>
+                    <li><strong>First direction optimization (x-axis):</strong>
                         <ul>
-                            <li>Perform a line search along each direction vector to find the minimum.</li>
-                            <li>Update the direction vectors based on the new position.</li>
-                            <li>Construct a new direction vector that combines previous directions.</li>
+                            <li>Minimize \( f(X) \) along the x-direction using golden section search.</li>
+                            <li>Update the optimal value \( X\)</li>
+                            <li>Check for convergence: if yes, stop.</li>
                         </ul>
                     </li>
-                    <li>Repeat until convergence criteria are met.</li>
-                </ol>
-            </p>
-    
+                    <li><strong>Second direction optimization (y-axis):</strong>
+                        <ul>
+                            <li>Repeat golden section search along the y-direction with the updated \( X \).</li>
+                            <li>Update \( X \)</li>
+                            <li>Check for convergence: if yes, stop.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>Return:</strong> The final optimal value \( X \)</li>
+        </ol>
 
 
-            <h4 class="fw-bold mb-3 text-primary">4. Discussions</h4>
-            <p>
-                <ul>
-                    <li>Does not require gradient or Hessian information</li>
-                    <li>Effective for smooth low-dimensional problems</li>
-                    <li>Capable of superlinear convergence under certain conditions</li>
-                </ul>
-            </p>
-    
-            <p>
-                <ul>
-                    <li>Can be inefficient in high-dimensional or non-smooth problems</li>
-                    <li>Sensitive to initial direction set</li>
-                    <li>May converge to local minima if the function is not unimodal in direction searches</li>
-                </ul>
-            </p>
 
-            <h4 class="fw-bold mb-3 text-primary">5. Applications</h4>
-            <p>
-                Powell’s method is commonly used in:
-                <ul>
-                    <li>Engineering design optimization</li>
-                    <li>Curve and surface fitting</li>
-                    <li>Machine learning hyperparameter tuning (when gradients are unavailable)</li>
-                </ul>
-            </p>
-    
+        <h4 class="fw-bold mb-3 text-primary">4. Discussions</h4>
+        <p>
+        <ul>
+            <li> Powell method is an extension of the golden section search to multiple dimensions.</li>
+            <li>Does not require gradient or Hessian information, it is applicable to non-smooth functions.</li>
+        </ul>
+        </p>
+
+
     </div>
-    
+
 
 </body>
 

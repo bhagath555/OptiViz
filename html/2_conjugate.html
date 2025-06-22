@@ -140,12 +140,32 @@
         </p>
 
         <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
-        <P> Consider a function \( f: \mathbb{R}^n \rightarrow \mathbb{R} \) with \( x \) as the input variable, \( \nabla f(x) \) as the gradient, and \( x_0 \) is the initial guess to the optimization problem. For the first iteration the input variable \(x = x_0\) is updated to \(x = x_1\) using below formula:</P>
-        <p> \[ x_1 = x_0 - t_0 \nabla f(x_0) \]</p>
-        here, \(t_0\) is the step length, and \(t_0 \nabla f(x_0)\) is the descent direction. For the next iteration, the input variable \(x\) is updated to \(x_2\) using the formula:</p>
-        <p> The conjugate gradient method updates the current point using the formula:</p>
-        <p> \[ d_{k} = - \nabla f(x_{k-1}) + \beta_k d_{k-2} \]</p>
+        <P> Consider a function \( f: \mathbb{R}^n \rightarrow \mathbb{R} \) with \( x \) as the input variable, \( \nabla f(x) \) as the gradient, and \( x_0 \) is the initial guess to the optimization problem. For the first iteration \(k = 1\) the input variable \(x = x_0\) is updated to \(x = x_1\) using below formula:</P>
 
+        <p> \[ x_1 = x_0 + t_0 d_0 \]</p>
+
+        <p> where \(t_0\) is the step length, and \(d_0 = - \nabla f(x_0)\) is the descent direction at the first iteration</p>
+
+        <p>Subsequently, for the next iteration \(k = 2\), the input variable \(x\) is updated to \(x_2\) using the formula:</p>
+
+        <p>
+            \[
+                x_2 = x_1 + t_1\,d_1, 
+                \quad\quad \text{where } \quad d_1 = -\nabla f(x_1) + \beta_1 d_0
+            \]
+        </p>
+
+        <p> where \(d_2\) is the descent direction, and \(t_2\) is the step length in the second iteration. It is observed that at each iteration \( k > 1 \) the algorithms is using gradients from previous two iterations to compute the descent direction.</p>
+
+        <p> To generalize the above function for \((k)^{th}\) iteration, where \( k > 1 \):</p>
+        
+        <p>
+            \[
+                x_{k+1} = x_{k} + t_k\,d_k, 
+                \quad\quad \text{where } \quad d_k = -\nabla f(x_{k}) + \beta_k d_{k-1}
+            \]
+        </p>
+        <p> There are several methods proposed for the computation of parameter \(\beta_k\), see the section below. Using of gradients from two previous iterations helps to reach optimal value faster.</p>
 
         <h4 class="fw-bold mb-3 text-primary">2. Beta Computation/Method</h4>
         <p> The parameter \(\beta_k\) is computed according to the following equations:</p>
@@ -222,7 +242,7 @@
             <li>\( x_2 = x_1 + \alpha d_1 = [0.8, 0.8]^T + 0.1 \cdot [-2.88, -2.88]^T = [0.512, 0.512]^T \)</li>
         </ul>
 
-        <h4 class="fw-bold mb-3 text-primary">5. References</h4>
+        <!-- <h4 class="fw-bold mb-3 text-primary">5. References</h4> -->
 
 
 

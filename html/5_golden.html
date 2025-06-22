@@ -12,7 +12,7 @@
 
     <!-- Math for Symbolic expressions -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.1/math.min.js"></script>
-    
+
     <!-- Plotly.js for plotting -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
@@ -61,7 +61,7 @@
                 </div>
 
                 <!-- Initial a0 -->
-                <div id="a0_container"  class="col-12 col-md-auto d-flex align-items-center gap-2">
+                <div id="a0_container" class="col-12 col-md-auto d-flex align-items-center gap-2">
                 </div>
 
                 <!-- Initial  c0-->
@@ -71,7 +71,7 @@
                 <!-- Calculate Button -->
                 <div id="calculate_container" class="col-12 col-md-auto d-flex align-items-center">
                 </div>
-                
+
             </div>
         </form>
     </div>
@@ -114,119 +114,139 @@
 
     <div class="container mx-5, my-5">
         <h1 class="fw-bold mb-3 text-primary">Golden Cut Method (Golden Section Search)</h1>
-    
-            <p>
-                The <strong>Golden Cut Method</strong> is a derivative-free optimization
-                algorithm used to find the minimum (or maximum) of a single variable function in a bounded interval. It is
-                a classical method in numerical optimization that provides guaranteed convergence without requiring gradient information.
-            </p>
-    
-            <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
-            <p>
-                Many real-world optimization problems involve functions that are continuous and unimodal over a certain interval
-                but are either expensive or impossible to differentiate. The golden section method provides a systematic way to
-                narrow down the search space and find the extremum using only function evaluations.
-            </p>
-            <p>
-                The method is based on the principle of dividing the interval into two parts in such a way that the ratio of the
-                lengths of the intervals is equal to the golden ratio. This ensures that each iteration reduces the search space
-                while maintaining a consistent reduction ratio.
-            </p>
-            <p>
-                The algorithm uses the mathematical constant known as the <strong>golden ratio</strong> \( \phi \), defined as:
-            </p>
 
-            \[
-            \phi = \frac{1 + \sqrt{5}}{2} \approx 1.618, \quad \text{and its conjugate:} \quad \tau = 1 - \frac{1}{\phi} \approx 0.382
-            \]
+        <p>
+            The <strong>Golden Cut Method</strong> is a derivative-free optimization
+            algorithm used to find the minimum (or maximum) of a single variable function in a bounded interval. It is
+            a classical method in numerical optimization that provides guaranteed convergence without requiring gradient
+            information.
+        </p>
 
-            <p>
-                These constants are used to divide the interval in a way that maintains a consistent reduction ratio at each iteration,
-                avoiding unnecessary function evaluations.
-            </p>
+        <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
+        <p>
+            Many real-world optimization problems involve functions that are continuous and unimodal over a certain
+            interval
+            but are either expensive or impossible to differentiate. The golden section method provides a systematic way
+            to
+            narrow down the search space and find the extremum using only function evaluations.
+        </p>
+        <p>
+            The method is based on the principle of dividing the interval into two parts in such a way that the ratio of
+            the
+            lengths of the intervals is equal to the golden ratio. This ensures that each iteration reduces the search
+            space
+            while maintaining a consistent reduction ratio.
+        </p>
+        <p>
+            The algorithm uses the mathematical constant known as the <strong>golden ratio</strong> \( \phi \), defined
+            as:
+        </p>
 
-            <p>
-                Suppose we want to minimize a function \( f(x) \) over the interval \([a, c]\). First compute two interior points \( b \) and \( d \) as shown below to satisfy the condition \( a < d < b < c\) :
-            </p>
-    
+        \[
+        \phi = \frac{1 + \sqrt{5}}{2} \approx 1.618, \quad \text{and its conjugate:} \quad \tau = 1 - \frac{1}{\phi}
+        \approx 0.382
+        \]
+
+        <p>
+            These constants are used to divide the interval in a way that maintains a consistent reduction ratio at each
+            iteration,
+            avoiding unnecessary function evaluations.
+        </p>
+
+        <p>
+            Suppose we want to minimize a function \( f(x) \) over the interval \([a, c]\). First compute two interior
+            points \( b \) and \( d \) as shown below to satisfy the condition \( a < d < b < c\) : </p>
+
             \[
             b = a + (1 - \tau)(c - a),
             \]
 
             \[
-             d = a + \tau(c - a)
+            d = a + \tau(c - a)
             \]
-    
+
             <p>
-                The function values at these points are \( f(b) \) and \( f(d) \). Depending on the function values, we can
+                The function values at these points are \( f(b) \) and \( f(d) \). Depending on the function values,
+                we can
                 discard one of the subintervals:
             </p>
 
-                \[
-                \text{If } f(b) < f(d) \text{, then set } c = d
-                \]
-                \[
-                \text{If } f(b) > f(d) \text{, then set } a = b
-                \]
+            \[
+            \text{If } f(b) < f(d) \text{, then set } c=d \] \[ \text{If } f(b)> f(d) \text{, then set } a = b
+            \]
+
             <p>
-                This process is repeated until the interval \([a, c]\) is sufficiently small, at which point the minimum is approximated by the midpoint of the interval.
+                This process is repeated until the interval \([a, c]\) is sufficiently small, at which point the
+                minimum is approximated by the midpoint of the interval.
             </p>
             <p>
-                At each step, the method reduces the interval size by a factor of approximately \( \phi - 1 \approx 0.618 \),
-                which guarantees convergence. It always reuses one of the previously evaluated points, minimizing computation.
+                At each step, the method reduces the interval size by a factor of approximately \( \phi - 1
+                \approx 0.618 \),
+                which guarantees convergence. It always reuses one of the previously evaluated points,
+                minimizing computation.
             </p>
 
             <h4 class="fw-bold mb-3 text-primary">2. Algorithm Overview</h4>
             <p>
                 The algorithm for the Golden Cut Method can be summarized as follows:
-                <ol>
-                    <li>Initialize the interval \([a, c]\) and compute the initial points \(b\) and \(d\).</li>
-                    <li>Evaluate the function at \(f(b)\) and \(f(d)\).</li>
-                    <li>Update the interval based on the function values.</li>
-                    <li>Repeat steps 2-3 until convergence.</li>
-                    <li>Return the midpoint of the final interval as the minimum.</li>
-                </ol>
             </p>
-
-            <h4 class="fw-bold mb-3 text-primary">3. Example</h4>
-            <p>
-                Consider the function \(f(x) = (x - 2)^2 + 1\) over the interval \([0, 4]\). The function is unimodal and has a minimum at \(x = 2\).
-                Using the Golden Cut Method, we can find the minimum as follows:
-            </p>
-            <p> The first iteration of the algorithm looks as below
-                <ul>
-                    <li>Initial interval: \([0, 4]\)</li>
-                    <li>\(b = 0 + (1 - \tau)(4 - 0) = 2.472\)</li>
-                    <li>\(d = 0 + \tau(4 - 0) = 1.528\)</li>
-                    <li>\(f(b) = f(2.472) = 1.173\) and \(f(d) = f(1.528) = 0.173\)</li>
-                    <li>Since \(f(b) > f(d)\), we set \(a = b\) and new interval will be \([2.472, 4]\)</li>
-                    <li>Next iteration will repeat the process with the new interval</li>
-                    <li>Continue until the interval is sufficiently small</li>
-                </ul>
-            </p>
+            <ol>
+                <li><strong>Initialize</strong> the search interval \([a, c]\) and compute the golden ratio
+                    \(\phi =
+                    \frac{\sqrt{5} - 1}{2}\).</li>
+                <li><strong>Compute internal points</strong>: <ul>
+                        <li>\(b = c - \phi (c - a)\)</li>
+                        <li>\(d = a + \phi (c - a)\)</li>
+                    </ul>
+                </li>
+                <li><strong>Evaluate the function</strong> at \(f(b)\) and \(f(d)\).</li>
+                <li><strong>Update the interval</strong>: <ul>
+                        <li>If \(f(b) < f(d)\), set \(c=d\)</li>
+                        <li>Else, set \(a = b\)</li>
+                    </ul>
+                </li>
+                <li><strong>Repeat</strong> steps 2–4 until the interval \([a, c]\) is sufficiently small (based
+                    on a
+                    stopping criterion such as \(|c - a| < \epsilon\)).</li>
+                <li><strong>Return</strong> the midpoint \(\frac{a + c}{2}\) as the estimated location of the
+                    minimum.</li>
+            </ol>
+            
 
 
-            <h4 class="fw-bold mb-3 text-primary">4. Discussions</h4>
-            <p> Advantages of the Golden Cut Method include:
-                <ul>
-                    <li>Guaranteed convergence to the minimum</li>
-                    <li>Does not require derivatives</li>
-                    <li>Efficient in terms of function evaluations</li>
-                    <li>Simple to implement and understand</li>
-                </ul>
-            </p>
-    
-            <p> Disadvantages include:
-                <ul>
-                    <li>Only applicable to unimodal functions</li>
-                    <li>Slower than gradient-based methods for smooth functions</li>
-                    <li>Requires a bounded interval</li>
-                </ul>
-            </p>
-    
+
+        <h4 class="fw-bold mb-3 text-primary">3. Example</h4>
+        <p>
+            Consider the function \(f(x) = (x - 2)^2 + 1\) over the interval \([0, 4]\). The function is unimodal and
+            has a minimum at \(x = 2\).
+            Using the Golden Cut Method, we can find the minimum as follows:
+        </p>
+        <p> The first iteration of the algorithm looks as below
+        <ul>
+            <li>Initial interval: \([0, 4]\)</li>
+            <li>\(b = 0 + (1 - \tau)(4 - 0) = 2.472\)</li>
+            <li>\(d = 0 + \tau(4 - 0) = 1.528\)</li>
+            <li>\(f(b) = f(2.472) = 1.173\) and \(f(d) = f(1.528) = 0.173\)</li>
+            <li>Since \(f(b) > f(d)\), we set \(a = b\) and new interval will be \([2.472, 4]\)</li>
+            <li>Next iteration will repeat the process with the new interval</li>
+            <li>Continue until the interval is sufficiently small</li>
+        </ul>
+        </p>
+
+
+        <h4 class="fw-bold mb-3 text-primary">4. Discussions</h4>
+        <ul>
+            <li>Simple to implement and understand</li>
+            <li>Guaranteed convergence to the minimum</li>
+            <li>Does not require derivatives, so it can be applied to discontinous functions as well.</li>
+            <li>Slower than gradient-based methods for smooth functions</li>
+            <li>Requires a bounded interval. If the optimal solution is not within the interval, actual optimum will be
+                missed.</li>
+        </ul>
+
 
     </div>
-    
+
 
 </body>
 

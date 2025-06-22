@@ -118,17 +118,16 @@
             <h1 class="fw-bold mb-3 text-primary">Newton's Method</h1>
     
             <p>
-                While first-order methods like Steepest Descent and Conjugate Gradient use only the gradient of the function \( f(\mathbf{x}) \) to calculate the local minima, Newton's Method also uses second-order information — the Hessian matrix \( H(\mathbf{x}) \). This allows for more informed steps, particularly near the optimum.
-            </p>
+                While first-order methods like Steepest Descent and Conjugate Gradient use only the gradient of the function \( f(\mathbf{x}) \) to calculate the direction of local minima. At a given function state, Newton's Method uses both first derivative and second derivative of the function to move in the direction on local minima. Using second derivative allows Newton's method to reach the local minima faster than first-order methods (Steepest descent and Conjugate gradient method). However, it is really improtant to choose the initial guess \( \mathbf{x}_0 \) close to the local minima, otherwise the method may diverge.
+            </p> 
 
             <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
             <p>
                 Newton's method is an iterative optimization algorithm that uses the first and second derivatives of a function to find its local minima or maxima. In each iteration, the algorithm updates the current point \( \mathbf{x}_k \) using the formula:
                 \[
-                    \mathbf{x}_{k+1} = \mathbf{x}_k - H^{-1}(\mathbf{x}_k) \nabla f(\mathbf{x}_k)
+                    \mathbf{x}_{k+1} = \mathbf{x}_k + d_k \quad \quad \text{where } \quad d_k = - H^{-1}(\mathbf{x}_k) \nabla f(\mathbf{x}_k)
                 \]
-                where \( H(\mathbf{x}_k) \) is the Hessian matrix at \( \mathbf{x}_k \), and \( \nabla f(\mathbf{x}_k) \) is the gradient of the function at \( \mathbf{x}_k \).
-                The Hessian matrix provides information about the curvature of the function, allowing for more accurate step directions than first-order methods.
+                where \(  d_k \) is the descent direction, \( H(\mathbf{x}_k) \) is the second derivative, and \( \nabla f(\mathbf{x}_k) \) is the gradient of the function at \( \mathbf{x}_k \). Second derivative, \( H(\mathbf{x}_k) \), is also known as the Hessian. For a function with one variable, hessian is a scalar value, while for function with multiple variables, it is a sqaure matrix. The Hessian matrix provides information about the curvature of the function, allowing for more accurate step directions than first-order methods.
                 
             </p>
 
@@ -142,9 +141,10 @@
                 <ul>
                     <li>Compute the Hessian matrix \( H(\mathbf{x}_k) \)</li>
                     <li>Compute the gradient \( \nabla f(\mathbf{x}_k) \)</li>
+                    <li>Descent direction \( d_k = - H^{-1}(\mathbf{x}_k) \nabla f(\mathbf{x}_k) \)</li>
                     <li>Update the point:</li>
                     <ul>
-                        <li>\( \mathbf{x}_{k+1} = \mathbf{x}_k - H^{-1}(\mathbf{x}_k) \nabla f(\mathbf{x}_k) \)</li>
+                        <li>\( \mathbf{x}_{k+1} = \mathbf{x}_k + d_k \)</li>
                     </ul>
                     <li>Increment \( k \)</li>
                 </ul>

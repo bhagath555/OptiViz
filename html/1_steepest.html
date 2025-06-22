@@ -131,25 +131,33 @@
         </p>
 
         <h4 class="fw-bold mb-3 text-primary">1. Method</h4>
-        <img src="../docs/sd_1.png" alt="Descriptive Alt" class="img-fluid float-end me-3 mb-3 rounded shadow"
+        <img src="../docs/sd_1.png" alt="Descriptive Alt" class="img-fluid float-end me-3 m-3 rounded shadow"
             style="width: 500px;">
 
         <p>
             Consider a function \(f: \mathbb{R}^n \to \mathbb{R}\) that is differentiable, and let \(x_0\) be the
             initial guess.
             The steepest descent method iteratively updates the prior point.
-            For the first iteration the update is done using the formula:
-            \[
-            x_{1} = x_0 - t_0 \nabla f(x_0)
-            \]
-            where \(t_0\) is the step size (or learning rate) at iteration \(1\), and \(\nabla f(x_0)\) is the
-            gradient of \(f\) at \(x_0\).
+            For the \(1^{st}\) iteration the update is done using the formula:
         </p>
+        \[
+        x_{1} = x_0 + t_0 \ d_0
+        \]
+
         <p>
-            For \(k^{th}\) iteration, the update rule becomes:
+            where \(t_0\) is the step size (or learning rate) and \( d_0 = -\nabla f(x_0) \) is the descent direction, which is negative of the gradient of the function.
+            
+        </p>
+        
+        <p>
+            For \((k+1)^{th}\) iteration, the update rule becomes:
             \[
-            x_{k} = x_{k-1} - t_k \nabla f(x_{k-1})
+            x_{k+1} = x_{k} + t_k \ d_k
             \]
+            where \(t_k\) and \(d_k\) are the step size and descent direction at iteration \(k\), respectively. The descent direction \( d_k \) is given by : \( d_k = -\nabla f(x_k)\). Note, all the optimization algorithms differ in the way they calculate the step length and descent direction.
+        </p>
+
+        <p>
             The iterative process continues until predefined convergence criteria is met. Typical convergence criteria include: If change in function values between iterations is less than a predefined threshold \(\varepsilon\), change in the input value between iterations is small, or if the gradient is close to zero, i.e., \(|\nabla f(x_k)| < \varepsilon\).
 
         </p>
@@ -162,18 +170,18 @@
         </ul>
 
 
-        <h4 class="fw-bold mb-3 text-primary">2. Line search method</h4>
+        <h5 class="fw-bold mb-3 text-primary">1.2 Line search method</h5>
         <p> The step length \(t_k\) is determined using a line search method, which aims to find the optimal step
             size that minimizes the function along the direction of the gradient.</p>
         <p> The most common line search methods include:
-        <h5>2.1. Constant step length</h5>
+        <h6>Constant step length</h6>
         <p> In this method, a fixed step length is used for all iterations. This is simple but may not be optimal for
             all iterations.</p>
-        <h5>2.2. Armijo rule</h5>
+        <h6>Armijo rule</h6>
         <p> The Armijo rule is a backtracking line search method that adjusts the step length based on the decrease in
             the function value. It ensures that the step length is not too large, which could lead to overshooting the
             minimum.</p>
-        <h5>2.3. Exact line search</h5>
+        <h6>Exact line search</h6>
         <p> The exact line search method finds the optimal step length by minimizing the function along the direction of
             the gradient. This is computationally expensive but can lead to faster convergence.</p>
 
@@ -181,41 +189,48 @@
             method.</p>
         </p>
 
-        <h4 class="fw-bold mb-3 text-primary">3. Algorithm</h4>
+        <h4 class="fw-bold mb-3 text-primary">2. Algorithm</h4>
         <p>
             The algorithm for the steepest descent method can be summarized as follows:
         <ol>
             <li>Initialize \(x_0\) and set a tolerance level \(\varepsilon\).</li>
             <li>Compute the gradient \(\nabla f(x_k)\).</li>
-            <li>Determine the step length \(t_k\) using a line search method.</li>
-            <li>Update the point: \(x_{k+1} = x_k - t_k \nabla f(x_k)\).</li>
-            <li>Check for convergence: if \(|f(x_{k+1}) - f(x_k)| < \varepsilon\), stop; otherwise, go to step 2.</li>
+            <li>Compute the descent direction \(d_k = - \nabla f(x_k)\).</li>
+            <li>Determine the step length \(t_k\) using method of choice (constant step size, Armijo rule, or exact line search)</li>
+            <li>Update the point: \(x_{k+1} = x_k + t_k \ d_k\).</li>
+            <li>Check for convergence:
+                <ul>
+                    <li>If \(|\nabla f(x_k)| < \varepsilon\), <strong>exit the loop</strong></li>
+                    <li>Otherwise  \(k = k + 1\), go to step 2.</li>
+                </ul>
         </ol>
         </p>
 
-        <h4 class="fw-bold mb-3 text-primary">4. Example</h4>
+        <h4 class="fw-bold mb-3 text-primary">3. Example</h4>
         <p>
             Consider the function \(f(x) = x^2 + 2x + 1\). The gradient is given by \(\nabla f(x) = 2x + 2\).
-            Starting from an initial guess \(x_0 = 4\), we can apply the steepest descent method with a constant step
+            Starting from an initial guess \(x_1 = 4\), we can apply the steepest descent method with a constant step
             size of \(t = 0.1\).
             The iterations would look like this:
+
             \[
-            x_1 = x_0 - t \cdot \nabla f(x_0) = 4 - 0.1 \cdot (2 \cdot 4 + 2) = 3
+            \text{Iteration 1 : } x_1 = x_0 - t \cdot \nabla f(x_0) = 4 - 0.1 \cdot (2 \cdot 4 + 2) = 3
             \]
             \[
-            x_2 = x_1 - t \cdot \nabla f(x_1) = 3 - 0.1 \cdot (2 \cdot 3 + 2) = 2.2
+            \text{Iteration 2 : } x_2 = x_1 - t \cdot \nabla f(x_1) = 3 - 0.1 \cdot (2 \cdot 3 + 2) = 2.2
             \]
-            and so on, until convergence.
+
+            and iterative process continues, until convergence condition, \(|f(x_{k+1}) - f(x_k)| < \varepsilon\) or, \(|x_{k+1} - x_k| < \varepsilon\) or \(|\nabla f(x_k)| < \varepsilon\), is met.
 
         </p>
 
 
-        <h4 class="fw-bold mb-3 text-primary">5. Discussion</h4>
+        <h4 class="fw-bold mb-3 text-primary">4. Discussion</h4>
         <p>
             The steepest descent method is a simple and effective 1st derivative optimization algorithm. For differentiable functions, it always converges to a local minimum under appropriate choice of step length. However, the choice of step length and line search method can
             significantly affect the convergence rate.
         </p>
-        <h4 class="fw-bold mb-3 text-primary">6. References</h4>
+        <!-- <h4 class="fw-bold mb-3 text-primary">6. References</h4> -->
     </div>
 
 
