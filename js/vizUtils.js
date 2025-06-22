@@ -167,18 +167,19 @@ export function nelder_max_x0(init_splinex){
 
 
 // Creates a 1D line trace for Plotly plots with customizable color, width, dash style, legend, and hover info
-export function createLineTrace1D(x, y, color = 'black', width = 2, dash = null, showlegend = false, hoverinfo = 'x+y') {
+export function createLineTrace1D(x, y, mode, color = 'black', width = 2, dash = null, size=6, showlegend = false, hoverinfo = 'x+y') {
     return {
         x, y,
-        mode: 'lines',
+        mode,
         line: { color, width, ...(dash && { dash }) },
+        marker: { color, size },
         showlegend,
         hoverinfo
     };
 }
 
 // Creates a 1D marker trace for Plotly plots with customizable color, size, legend, and hover info
-export function createMarkerTrace1D(x, y, color = 'black', size = 6, showlegend = false, hoverinfo = 'x+y') {
+export function createMarkerTrace1D(x, y,  color = 'black', size = 3, showlegend = false, hoverinfo = 'x+y') {
     return {
         x, y,
         mode: 'markers',
@@ -204,10 +205,14 @@ export function create_line_2d(x, y, z, type, mode, color = 'black', width = 2, 
 
 export function plotly_1d_initial_data(X, Y, x0, y0) {
     return [
-        createLineTrace1D(X, Y, 'black', 2),
-        createMarkerTrace1D([x0], [y0], 'red', 8),
-        createLineTrace1D([], [], 'blue', 2),
-        createLineTrace1D([], [], 'green', 1, 'dot')
+        // Line trace for the function
+        createLineTrace1D(X, Y, 'lines', '#0c6cfc', 2),
+        // Marker for the initial point
+        createMarkerTrace1D([x0], [y0], 'black', 6),
+        // Descent direction line (initially empty)
+        createLineTrace1D([], [], 'lines', 'black', 1),
+        // Projection line (initially empty)
+        createLineTrace1D([], [], 'lines+markers', 'black', 0.5, 'dot')
     ];
 }
 
@@ -243,12 +248,15 @@ export function plotly2DInitialData(X,Y,Z,x0,y0,z0) {
 
 
 export function createGoldenSectionData(f, X, Y, a, c, yMin, yMax) {
+    const line_color = '#0c6cfc';
+    const lower_bound_color = '#ff9900';
+    const upper_bound_color = 'red';
     return [
-        createLineTrace1D(X, Y, 'black', 2),
-        createMarkerTrace1D([a], [f(a)], 'blue', 8),
-        createMarkerTrace1D([c], [f(c)], 'red', 8),
-        createLineTrace1D([a, a], [yMin, yMax], 'blue', 2, 'dot'),
-        createLineTrace1D([c, c], [yMin, yMax], 'red', 2, 'dot')
+        createLineTrace1D(X, Y, line_color, 2),
+        createMarkerTrace1D([a], [f(a)], lower_bound_color, 8),
+        createMarkerTrace1D([c], [f(c)], upper_bound_color, 8),
+        createLineTrace1D([a, a], [yMin, yMax], lower_bound_color, 2, 'dot'),
+        createLineTrace1D([c, c], [yMin, yMax], upper_bound_color, 2, 'dot')
     ];
 }
 
@@ -266,14 +274,14 @@ export function getLayout(dim, name) {
         sliders: [{
             pad: { t: 25 },
             currentvalue: {
-                xanchor: 'right',
-                prefix: 'Step: ',
+                xanchor: 'left',
+                prefix: 'Iteration: ',
                 font: { color: '#888', size: 15 }
             },
             ticklen: 0,
             transition: { duration: 300, easing: 'cubic-in-out' },
-            bgcolor: 'blue',
-            bordercolor: 'black',
+            bgcolor: '#0c6cfc',
+            bordercolor: '#0c6cfc',
             steps: []
         }]
     };
