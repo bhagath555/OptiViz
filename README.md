@@ -12,7 +12,7 @@ Check out the website at [OptiViz](https://bhagath555.github.io/OptiViz/)
 > * **have feature suggestions, or**
 > * **see areas for improvement,**
 >   
-> please feel free to contact me by [Email](mbhagath555@gmail.com) or create an issue and explain the problem at [issues](https://github.com/bhagath555/OptiViz/issues)
+> please feel free to contact me vie mail : mbhagath555@gmail.com or create an issue and explain the problem at [issues](https://github.com/bhagath555/OptiViz/issues)
 
 ## The available Optimization Methods in the website
 
