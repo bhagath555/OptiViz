@@ -104,7 +104,7 @@
         <div class="alert alert-light" style="background-color: #f0f0f0;" role="alert">
             <strong>⚠️ Note:</strong> This code and website is currently in beta.
             <p>
-                We welcome your feedback! If you: 
+                We welcome your feedback! If you:
                 <em>
                     encounter any bugs or issues
                     | notice mistakes
@@ -113,8 +113,8 @@
                 </em>
             </p>
             <p>
-                Please feel free to explain the problem <a
-                    href="https://github.com/bhagath555/OptiViz/issues">here</a> by creating an issue on GitHub,
+                Please feel free to explain the problem <a class="link-offset-1 link-underline link-underline-opacity-0 link-underline-opacity-100-hover" href="https://github.com/bhagath555/OptiViz/issues">here</a>
+                by creating an issue on GitHub,
                 or contact me via mail : mbhagath555@gmail.com.
             </p>
         </div>
@@ -160,10 +160,17 @@
                         <div class="card-body">
                             <h5 class="card-title text-primary">First-Order (Gradient) Methods</h5>
                             Uses only the first derivative of the function to find new optimal point.
-                            <ul>
-                                <li>Steepest Descent (1D/2D)</li>
-                                <li>Conjugate Gradient (1D/2D)</li>
-                            </ul>
+                            <table class="table table-borderless mb-0 table-hover">
+                                <tbody id="optTableBody">
+                                    <tr>
+                                        <td><a href="html/1_steepest.html" style="text-decoration: none; color: black;">Steepest Descent (1D/2D)</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="html/2_conjugate.html" style="text-decoration: none; color: black;">Conjugate Gradient (1D/2D)</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
                         </div>
                     </div>
                 </div>
@@ -174,10 +181,16 @@
                         <div class="card-body">
                             <h5 class="card-title text-primary">Second-Order (Hessian) Methods</h5>
                             Uses the first and second detivates of the function to find new optimal point.
-                            <ul>
-                                <li>Newton method (1D/2D)</li>
-                                <li>Levenberg-Marquardt Method (1D/2D)</li>
-                            </ul>
+                            <table class="table table-borderless mb-0 table-hover">
+                                <tbody id="optTableBody">
+                                    <tr>
+                                        <td><a href="html/3_newton.html" style="text-decoration: none; color: black;">Newton method (1D/2D)</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td><a href="html/4_lmm.html" style="text-decoration: none; color: black;">Levenberg-Marquardt Method (1D/2D)</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -188,11 +201,19 @@
                             <h5 class="card-title text-primary">Zeroth-Order (derivative-free) Methods</h5>
                             Doesn't use the derivatives of the function. Evaluates the function at various points to
                             find the minimum.
-                            <ul>
-                                <li>Golden cut (1D)</li>
-                                <li>Powell (2D)</li>
-                                <li>Nelder-Mead (2D)</li>
-                            </ul>
+                            <table class="table table-hover borderless mb-0">
+                                <tbody id="optTableBody">
+                                    <tr>
+                                        <td ><a href="/html/5_golden.html" style="text-decoration: none; color: black;">Golden cut (1D)</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td ><a href="/html/6_powell.html" style="text-decoration: none; color: black;">Powell (2D)</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td ><a href="/html/7_nelder.html" style="text-decoration: none; color: black;">Nelder-Mead (2D)</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -217,7 +238,9 @@
 
     <footer class="bg-light text-center py-3 mt-5">
         <small>&copy; 2025 OptiViz</small>
-        <p>Interested in the course, visit <a href="https://www.uni-weimar.de/en/civil-and-environmental-engineering/studies/master-degree-programmes/digital-engineering/" class="link-offset-1">Digital Engineering, Bauhaus University Weimar</a></p>
+        <p>Interested in the course, visit <a
+                href="https://www.uni-weimar.de/en/civil-and-environmental-engineering/studies/master-degree-programmes/digital-engineering/"
+                class="link-offset-1 link-underline link-underline-opacity-0 link-underline-opacity-100-hover">Digital Engineering, Bauhaus University Weimar</a></p>
     </footer>
 
 
