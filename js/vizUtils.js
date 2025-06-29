@@ -45,17 +45,17 @@ export function nelderMeadTableRow(table_body, itr, x, y, f) {
 
 export function displayTermination(isConverged, num_steps, isDiverged=false){
     const Termination = document.getElementById('termination');
-    if (isDiverged) {
-        Termination.innerHTML = "Termination : Diverging";
-        Termination.style.color = "red";
-        return;
-    }
+    // if (isDiverged) {
+    //     Termination.innerHTML = "Termination : Not converging";
+    //     Termination.style.color = "red";
+    //     return;
+    // }
     if (isConverged) {
         Termination.innerHTML = "Termination : Converged after " + (num_steps - 1) + " steps";
         Termination.style.color = "green";
     } else {
         Termination.innerHTML = "Termination : Maximum number of steps reached";
-        Termination.style.color = "blue";
+        Termination.style.color = "red";
     }
 }
 
