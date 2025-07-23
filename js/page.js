@@ -289,6 +289,7 @@ function toggle2DEvents() {
     const x0_container = document.getElementById("x0_container");
     const y0_container = document.getElementById("y0_container");
     const obj_container = document.getElementById("objective_container");
+     obj_container.innerHTML = '';
 
     const obj_selector_container = document.getElementById("objectiveSelect_container");
 
@@ -361,6 +362,7 @@ function toggle2DEvents() {
 
         // Note : y0 is not used in 1D, so no need to add event listener for y0
 
+        
         // Initial plot with default values
         // ---------------------------------------------------------------------
         viz.visualize1D_initial(plot_id); // plot the function with initial guess
@@ -414,12 +416,12 @@ function generateObjectiveSelect2D() {
 // If new functions are added in utils.js, add them here as well.
 function custom_objective1D_innerhtml() {
     return `
-        <input type="text" class="form-control" id="custom_objective" value="x^2" style="max-width: 200px;"> `
+        <input type="text" class="form-control" id="custom_objective" value="x^2 + sin(2 *x) * 2" style="max-width: 250px;"> `
 };
 
 function custom_objective2D_innerhtml() {
     return ` 
-        <input type="text" class="form-control" id="custom_objective" value="x^2 + y^2" style="max-width: 200px;"> `
+        <input type="text" class="form-control" id="custom_objective" value="x^2 + y^2  + 4 cos(0.5 * x*y)" style="width: 250px;"> `
 };
 
 
