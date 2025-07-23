@@ -300,8 +300,6 @@ function toggle2DEvents() {
 
         obj_selector_container.innerHTML = generateObjectiveSelect2D(); // show objective select for 2D functions
 
-        obj_container.innerHTML = custom_objective2D_innerhtml(); // show 2D functions
-
         // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
         obj_selector.addEventListener("change", function () {
@@ -344,8 +342,6 @@ function toggle2DEvents() {
     } else { // 1D
 
         obj_selector_container.innerHTML = generateObjectiveSelect1D(); // show objective select for 1D functions
-
-        obj_container.innerHTML = custom_objective1D_innerhtml(); // show 1D functions
 
         x0_container.innerHTML = x0_innerhtml(); // show x0 input
         y0_container.innerHTML = ''; // hide

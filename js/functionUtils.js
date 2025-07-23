@@ -27,23 +27,23 @@ const parabola = {
 
 
 // Wavybowl function
-// f(x) = 0.05 * x^2 - cos(x)
-// Gradient: 0.1 * x + sin(x)
+// f(x) = 0.05 * x^2 + cos(x)
+// Gradient: 0.1 * x - sin(x)
 // Hessian: 0.1 - cos(x)
 const wavybowl = {
     name: "Wavybowl",
     description: "f(x) = 1 * x^2 - cos(x)",
     f: function(x) {
-        return 1 * x * x - 2 *Math.cos(x);
+        return x * x + 3 * Math.cos(3 * x);
     },
     g: function(x) {
-        return 2 * x + 2 * Math.sin(x);
+        return 2 * x - 6 * Math.sin(3 * x);
     },
     h: function(x) {
-        return 2 + 2 * Math.cos(x);
+        return 2 - 18 * Math.cos(3 * x);
     },
     hessianInv: function(x) {
-        return 1 / (0.1 + Math.cos(x));
+        return 1 / (2 - 18 * Math.cos(3 * x));
     },
 };
 
