@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log('Page loaded:', page); // Check if the page is loaded
     // Selecting the container that are general in steepst, conjugate, newton and lmm pages
     const toggle2D_container = document.getElementById("toggle2D_container");
+
+    const obj_selector_container = document.getElementById("objectiveSelect_container");
+
     const obj_container = document.getElementById("objective_container");
     const line_search_container = document.getElementById("line_search_container");
     const x0_container = document.getElementById("x0_container");
@@ -15,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const step_length_container = document.getElementById("step_length_container");
     const calc_container = document.getElementById("calculate_container");
     calc_container.innerHTML = calculator_innerhtml(); // show calculate button
-    
+
     // Plot id
     const plot_id = "plot";
 
@@ -30,11 +33,16 @@ document.addEventListener("DOMContentLoaded", function () {
             // lineaerch and step length inputs for steepst, conjugate and lmm pages
             line_search_container.innerHTML = lineSearchSelect_innerhtml(); // show line search select
             step_length_container.innerHTML = stepLength_innerhtml(); // show step length input
-        }        
+        }
     }
 
-    else if (page === "golden"){
-        obj_container.innerHTML = objectiveSelect1D_innerhtml();
+    else if (page === "golden") {
+
+        obj_selector_container.innerHTML = generateObjectiveSelect1D(); // show objective select for 1D functions
+
+        // obj_container.innerHTML = custom_objective1D_innerhtml();
+
+
         // a0 and c0 inputs for golden section search
         const a0_container = document.getElementById("a0_container");
         const c0_container = document.getElementById("c0_container");
@@ -42,15 +50,17 @@ document.addEventListener("DOMContentLoaded", function () {
         a0_container.innerHTML = number_innerhtml("a0", 1, 0.1); // show a0 input
         c0_container.innerHTML = number_innerhtml("c0", 4, 0.1); // show c0 input
     }
-    else if (page === "powell" || page === "nelder"){
-        obj_container.innerHTML = objectiveSelect2D_innerhtml();
-        if (page === "powell"){
+    else if (page === "powell" || page === "nelder") {
+
+        obj_selector_container.innerHTML = generateObjectiveSelect2D();
+
+        if (page === "powell") {
             const x0_container = document.getElementById("x0_container");
             const y0_container = document.getElementById("y0_container");
             x0_container.innerHTML = number_innerhtml("x0", 1, 0.1); // show x0 input
             y0_container.innerHTML = number_innerhtml("y0", 4, 0.1); // show y0 input
         }
-        else{ // page === "nelder"
+        else { // page === "nelder"
             const ids = ['x1', 'y1', 'x2', 'y2', 'x3', 'y3'];
             const values = {};
 
@@ -97,17 +107,17 @@ function eventListeners() {
                 }
             });
 
-        }       
+        }
 
         // toggle2D event
         toggle2DEvents(); // show/hide y0 and objective select for 2D functions
         toggle2D.addEventListener("change", function () {
             toggle2DEvents(); // show/hide y0 and objective select for 2D functions
         });
-        
+
         // Calculate event listener
         const calculator = document.getElementById("calculateBtn");
-        calculator.addEventListener("click", function() {
+        calculator.addEventListener("click", function () {
             const page = document.body.dataset.page; // Get the current page from the body data attribute
             const toggle2D = document.getElementById("toggle2D");
             if (toggle2D.checked) {
@@ -117,7 +127,7 @@ function eventListeners() {
                 viz.visualize1d(page);
             }
         });
-        
+
     }
     // Page is golden section search
     else if (page === "golden") {
@@ -130,7 +140,7 @@ function eventListeners() {
         // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
         obj_selector.addEventListener("change", function () {
-            viz.golden_initial(); // plot the function with initial guess
+            objectiveSelect_eventListener(); // update the objective select
         });
 
         // Event listener for a0
@@ -152,7 +162,7 @@ function eventListeners() {
         // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
         obj_selector.addEventListener("change", function () {
-            viz.visualize2D_initial(plot_id); // plot the function with initial guess
+            objectiveSelect_eventListener(); // update the objective select
         });
 
         // Event listener for x0
@@ -168,7 +178,7 @@ function eventListeners() {
         });
 
         const calculateBtn = document.getElementById("calculateBtn");
-        calculateBtn.addEventListener("click", function() {
+        calculateBtn.addEventListener("click", function () {
             viz.visualize_powell(); // plot the function with initial guess
         });
 
@@ -177,11 +187,12 @@ function eventListeners() {
     }
 
     else if (page === "nelder") {
-        
+
         // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
+
         obj_selector.addEventListener("change", function () {
-            viz.nelder_initial();
+            objectiveSelect_eventListener(); // update the objective select
         });
 
         // Event listener for x0,y0,x1,y1,x2,y2,x3,y3
@@ -195,7 +206,7 @@ function eventListeners() {
         });
 
         const calculateBtn = document.getElementById("calculateBtn");
-        calculateBtn.addEventListener("click", function() {
+        calculateBtn.addEventListener("click", function () {
             viz.visualize_nelder(); // plot the function with initial guess
         });
 
@@ -203,34 +214,102 @@ function eventListeners() {
     }
 }
 
+function objectiveSelect_eventListener() {
+    const page = document.body.dataset.page; // Get the current page from the body data attribute
+    const toggle2D = document.getElementById("toggle2D");
+    const objective = document.getElementById("objectiveSelect").value; // get the selected value
+    const obj_container = document.getElementById("objective_container");
+    if (objective === "custom") {
+        // updating the function based on the page
+        if (page === "nelder" || page === "powell") {
+            obj_container.innerHTML = custom_objective2D_innerhtml(); // show custom objective input
+        }
+        else if (page === "golden") {
+            obj_container.innerHTML = custom_objective1D_innerhtml(); // show custom objective input
+        }
+        else if (page === "steepest" || page === "conjugate" || page === "newton" || page === "lmm") {
+            if (toggle2D.checked) {
+                obj_container.innerHTML = custom_objective2D_innerhtml(); // show custom objective input
+            } else {
+                obj_container.innerHTML = custom_objective1D_innerhtml(); // show custom objective input
+            }
+        }
 
+        // Add event listener for custom objective input
+        const custom_objective = document.getElementById("custom_objective");
+        custom_objective.addEventListener("change", function () {
+            if (page === "steepest" || page === "conjugate" || page === "newton" || page === "lmm") {
+                if (toggle2D.checked) {
+                    viz.visualize2D_initial("plot"); // plot the function with initial guess
+                }
+                else {
+                    viz.visualize1D_initial("plot"); // plot the function with initial guess
+                }
+            }
+            else if (page === "golden") {
+                viz.golden_initial(); // plot the function with initial guess
+            }
+            else if (page === "powell") {
+                viz.visualize2D_initial("plot"); // plot the function with initial guess
+            }
+            else if (page === "nelder") {
+                viz.nelder_initial(); // plot the function with initial guess
+            }
+        });
+
+
+    } else {
+        obj_container.innerHTML = ''; // hide custom objective input
+    }
+
+    if (page === "steepest" || page === "conjugate" || page === "newton" || page === "lmm") {
+        if (toggle2D.checked) {
+            viz.visualize2D_initial("plot"); // plot the function with initial guess
+        }
+        else {
+            viz.visualize1D_initial("plot"); // plot the function with initial guess
+        }
+    }
+    else if (page === "golden") {
+        viz.golden_initial(); // plot the function with initial guess
+    }
+    else if (page === "powell") {
+        viz.visualize2D_initial("plot"); // plot the function with initial guess
+    }
+    else if (page === "nelder") {
+        viz.nelder_initial(); // plot the function with initial guess
+    }
+}
 // Event listeners that creates the dynamic html for 2D toggle and objective select
 function toggle2DEvents() {
     const page = document.body.dataset.page; // Get the current page from the body data attribute
-    const plot_id = "plot"; 
+    const plot_id = "plot";
     const toggle2D = document.getElementById("toggle2D");
     // If 2D toggle is checked, show y0 and objective select for 2D functions
     const x0_container = document.getElementById("x0_container");
     const y0_container = document.getElementById("y0_container");
     const obj_container = document.getElementById("objective_container");
+
+    const obj_selector_container = document.getElementById("objectiveSelect_container");
+
     // Also, update their event listeners
     if (toggle2D.checked) {
 
         x0_container.innerHTML = x0_innerhtml(); // show x0 input
         y0_container.innerHTML = y0_innerhtml(); // show y0 input
-        obj_container.innerHTML = objectiveSelect2D_innerhtml(); // show 2D functions
 
-        // Add event listener for y0 once it's injected
-        const obj_selector = document.getElementById("objectiveSelect");
-        const x0 = document.getElementById("x0");
-        const y0 = document.getElementById("y0");
-        
+        obj_selector_container.innerHTML = generateObjectiveSelect2D(); // show objective select for 2D functions
+
+        obj_container.innerHTML = custom_objective2D_innerhtml(); // show 2D functions
+
         // Event listener for objective select
+        const obj_selector = document.getElementById("objectiveSelect");
         obj_selector.addEventListener("change", function () {
-            viz.visualize2D_initial(plot_id); // plot the function with initial guess
+            objectiveSelect_eventListener(); // update the objective select
         });
 
         // Event listener for x0
+        const x0 = document.getElementById("x0");
         x0.addEventListener("input", function () {
             const plotElement = document.getElementById(plot_id);
             let camera = { eye: { x: 1.5, y: 1.5, z: 1.5 } };
@@ -245,6 +324,7 @@ function toggle2DEvents() {
         });
 
         // Event listener for y0
+        const y0 = document.getElementById("y0");
         y0.addEventListener("input", function () {
             const plotElement = document.getElementById(plot_id);
             let camera = { eye: { x: 1.5, y: 1.5, z: 1.5 } };
@@ -262,22 +342,23 @@ function toggle2DEvents() {
 
 
     } else { // 1D
-        
-        obj_container.innerHTML = objectiveSelect1D_innerhtml(); // show 1D functions
+
+        obj_selector_container.innerHTML = generateObjectiveSelect1D(); // show objective select for 1D functions
+
+        obj_container.innerHTML = custom_objective1D_innerhtml(); // show 1D functions
 
         x0_container.innerHTML = x0_innerhtml(); // show x0 input
         y0_container.innerHTML = ''; // hide
 
-        // Access the inputs for visualization
+        // Event listener for objective select
         const obj_selector = document.getElementById("objectiveSelect");
-        const x0 = document.getElementById("x0");
-
-        // Objective select event listener
         obj_selector.addEventListener("change", function () {
-            viz.visualize1D_initial(plot_id); // plot the function with initial guess
+            objectiveSelect_eventListener(); // update the objective select
         });
 
+
         // Event listener for x0
+        const x0 = document.getElementById("x0");
         x0.addEventListener("input", function () {
             viz.visualize1D_initial(plot_id); // plot the function with initial guess
         });
@@ -303,8 +384,9 @@ function toggle2D_innerhtml() {
         </div>`;
 }
 
+
 function generateObjectiveSelectHTML(options = []) {
-    const optionHTML = options.map(([value, label]) => 
+    const optionHTML = options.map(([value, label]) =>
         `<option value="${value}">${label}</option>`
     ).join('\n');
 
@@ -315,23 +397,33 @@ function generateObjectiveSelectHTML(options = []) {
         </select>`;
 }
 
-function generateObjectiveHTML(){
-    return  ` 
-        <label for="objectiveSelect" class="form-label mb-0">Function</label>
-        <input type="text" class="form-control" id="functionInput" value="x^2 + y^2" style="max-width: 200px;"> `
-    }
+function generateObjectiveSelect1D() {
+    return generateObjectiveSelectHTML([
+        ["parabola", "Parabola"],
+        ["wavybowl", "Wavy bowl"],
+        ["custom", "custom"],
+    ]);
+}
+
+function generateObjectiveSelect2D() {
+    return generateObjectiveSelectHTML([
+        ["sphere", "Sphere"],
+        ["rosenbrock", "Rosenbrock"],
+        ["himmelblau", "Himmelblau"],
+        ["custom", "custom"],
+    ]);
+}
+
 
 // If new functions are added in utils.js, add them here as well.
-function objectiveSelect1D_innerhtml() {
-    return  ` 
-        <label for="objectiveSelect" class="form-label mb-0">Function</label>
-        <input type="text" class="form-control" id="objectiveSelect" value="x^2" style="max-width: 200px;"> `
+function custom_objective1D_innerhtml() {
+    return `
+        <input type="text" class="form-control" id="custom_objective" value="x^2" style="max-width: 200px;"> `
 };
 
-function objectiveSelect2D_innerhtml() {
-    return  ` 
-        <label for="objectiveSelect" class="form-label mb-0">Function</label>
-        <input type="text" class="form-control" id="objectiveSelect" value="x^2 + y^2" style="max-width: 200px;"> `
+function custom_objective2D_innerhtml() {
+    return ` 
+        <input type="text" class="form-control" id="custom_objective" value="x^2 + y^2" style="max-width: 200px;"> `
 };
 
 

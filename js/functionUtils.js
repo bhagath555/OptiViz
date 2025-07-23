@@ -1,4 +1,190 @@
 
+// --------------- 1D OPTIMIZATION FUNCTIONS --------------- //
+// If new function are added in this section, add them in the getfunction(), 
+// and objectiveSelect1D_innerhtml and objectiveSelect2D_innerhtml in page.js.
+
+// Parabola function
+// f(x) = 2 + (x - 1)^2
+// Gradient: 2 * (x - 1)
+// Hessian: 2
+const parabola = {
+    name: "Parabola",
+    description: "f(x) = 2 + (x)^2",
+    f: function(x) {
+        return 2 + Math.pow(x, 2);
+    },
+    g: function(x) {
+        return 2 * x;
+    },
+    h: function(x) {
+        return 2;
+    },
+    hessianInv: function(x) {
+        return 0.5;
+    },
+};
+
+
+
+// Wavybowl function
+// f(x) = 0.05 * x^2 - cos(x)
+// Gradient: 0.1 * x + sin(x)
+// Hessian: 0.1 - cos(x)
+const wavybowl = {
+    name: "Wavybowl",
+    description: "f(x) = 1 * x^2 - cos(x)",
+    f: function(x) {
+        return 1 * x * x - 2 *Math.cos(x);
+    },
+    g: function(x) {
+        return 2 * x + 2 * Math.sin(x);
+    },
+    h: function(x) {
+        return 2 + 2 * Math.cos(x);
+    },
+    hessianInv: function(x) {
+        return 1 / (0.1 + Math.cos(x));
+    },
+};
+
+
+// --------------- 2D OPTIMIZATION FUNCTIONS --------------- //
+
+// Sphere function
+// f(x, y) = x^2 + y^2
+// Gradient: [2x, 2y]
+// Hessian: [[2, 0], [0, 2]]
+const sphere = {
+    name: "Sphere",
+    description: "f(x) = x^2 + y^2",
+    f: function(x) {
+        return Math.pow(x[0], 2) + Math.pow(x[1], 2);
+    },
+    g: function(x) {
+        return [2 * x[0], 2 * x[1]];
+
+    },
+    h: function(x) {
+        return [[2, 0], [0, 2]];
+    },
+    hessianInv: function(x) {
+        return [[0.5, 0], [0, 0.5]];
+    },
+};
+
+
+// Rosenbrock function
+// f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+// Gradient: [2 * (x - 1) + 400 * (y - x^2) * x, 200 * (y - x^2)]
+// Hessian: [[2 + 400 * (y - x^2), -400 * x], [-400 * x, 200]]
+
+const rosenbrock = {
+    name: "Rosenbrock",
+    description: "f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2",
+    f: function(x) {
+        return Math.pow(1 - x[0], 2) + 100 * Math.pow(x[1] - Math.pow(x[0], 2), 2);
+    },
+    g: function(x) {
+        return [2 * (x[0] - 1) - 400 * (x[1] - Math.pow(x[0], 2)) * x[0], 200 * (x[1] - Math.pow(x[0], 2))];
+    },
+    h: function(x) {
+        return [[2 - 400 * (x[1] - Math.pow(x[0], 2)), -400 * x[0]], [-400 * x[0], 200]];
+    },
+    hessianInv: function(x) {
+        let hess = this.h(x);
+        return invertMatrix2x2(hess);
+    },
+};
+
+
+// Himmelblau function
+// f(x, y) = (x^2 + y - 11)^2 + (x + y^2 - 7)^2
+// Gradient: [4 * (x^2 + y - 11) * x + 2 * (x + y^2 - 7), 2 * (x^2 + y - 11) + 4 * (x + y^2 - 7) * y]
+// Hessian: [[12 * x^2 + 2 * y - 42, 4 * x + 4 * y], [4 * x + 4 * y, 12 * y^2 + 2 * x - 26]]
+
+const himmelblau = {
+    name: "Himmelblau",
+    description: "f(x, y) = (x^2 + y - 11)^2 + (x + y^2 - 7)^2",
+    f: function(x) {
+        return Math.pow(Math.pow(x[0], 2) + x[1] - 11, 2) + Math.pow(x[0] + Math.pow(x[1], 2) - 7, 2);
+    },
+    g: function(x) {
+        return [4 * (Math.pow(x[0], 2) + x[1] - 11) * x[0] + 2 * (x[0] + Math.pow(x[1], 2) - 7), 2 * (Math.pow(x[0], 2) + x[1] - 11) + 4 * (x[0] + Math.pow(x[1], 2) - 7) * x[1]];
+    },
+    h: function(x) {
+        return [[12 * Math.pow(x[0], 2) + 2 * x[1] - 42, 4 * x[0] + 4 * x[1]], [4 * x[0] + 4 * x[1], 12 * Math.pow(x[1], 2) + 2 * x[0] - 26]];
+    },
+    hessianInv: function(x) {
+        let hess = this.h(x);
+        return invertMatrix2x2(hess);
+    },
+};
+
+// Banana function (Rosenbrock's valley)
+// f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
+// Gradient: [2 * (x - 1) + 400 * (y - x^2) * x, 200 * (y - x^2)]
+// Hessian: [[2 + 400 * (y - x^2), -400 * x], [-400 * x, 200]]
+
+const banana = {
+    name: "Banana",
+    description: "f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2",
+    f: function(x) {
+        return Math.pow(1 - x[0], 2) + 100 * Math.pow(x[1] - Math.pow(x[0], 2), 2);
+    },
+    g: function(x) {
+        return [2 * (x[0] - 1) + 400 * (x[1] - Math.pow(x[0], 2)) * x[0], 200 * (x[1] - Math.pow(x[0], 2))];
+    },
+    h: function(x) {
+        return [[2 + 400 * (x[1] - Math.pow(x[0], 2)), -400 * x[0]], [-400 * x[0], 200]];
+    },
+    hessianInv: function(x) {
+        let hess = this.h(x);
+        return invertMatrix2x2(hess);
+    },
+};
+
+
+const sinCosBowl = {
+    name: "SinCosBowl",
+    description: "f(x, y) = sin(x)·cos(y) + 0.1(x² + y²)",
+
+    // Function value
+    f: function(x) {
+        return Math.sin(x[0]) * Math.cos(x[1]) + 0.1 * (x[0] ** 2 + x[1] ** 2);
+    },
+
+    // Gradient
+    g: function(x) {
+        return [
+            Math.cos(x[0]) * Math.cos(x[1]) + 0.2 * x[0],  // df/dx
+            -Math.sin(x[0]) * Math.sin(x[1]) + 0.2 * x[1] // df/dy
+        ];
+    },
+
+    // Hessian matrix
+    h: function(x) {
+        return [
+            [ // d²f/dx²
+                -Math.sin(x[0]) * Math.cos(x[1]) + 0.2,
+                -Math.cos(x[0]) * Math.sin(x[1])        // d²f/dxdy
+            ],
+            [ // d²f/dydx, d²f/dy²
+                -Math.cos(x[0]) * Math.sin(x[1]),
+                -Math.sin(x[0]) * Math.cos(x[1]) + 0.2
+            ]
+        ];
+    },
+
+    // Inverse of the Hessian (optional, using helper function)
+    hessianInv: function(x) {
+        let hess = this.h(x);
+        return invertMatrix2x2(hess);
+    },
+};
+
+
+
+
 
 // Define allowed math functions and operators for safety
 const ALLOWED_FUNCTIONS = new Set(['sin', 'cos', 'tan', 'log', 'exp', 'sqrt', 'abs', 'asin', 'acos', 'atan', 'pow']);
@@ -61,6 +247,29 @@ export function isSafeMathInput(expr, dims = 1) {
  * @returns {Object} Object with f (function), g (gradient), h (Hessian)
  */
 export function getFunction(funcStr, dims) {
+
+    if (funcStr === "parabola") {
+        return parabola;
+    }
+    else if (funcStr === "wavybowl") {
+        return wavybowl;
+    }
+    else if (funcStr === "sphere") {
+        return sphere;
+    }
+    else if (funcStr === "rosenbrock") {
+        return rosenbrock;
+    }
+    else if (funcStr === "himmelblau") {
+        return himmelblau;
+    }
+    else if (funcStr === "banana") {
+        return banana;
+    }
+    else if (funcStr === "sinCosBowl") {
+        return sinCosBowl;
+    }   
+
     // Validate the function string for safety
     if (!isSafeMathInput(funcStr, dims)) {
         console.log("Unsafe math input detected:", funcStr);

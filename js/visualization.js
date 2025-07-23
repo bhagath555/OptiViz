@@ -65,11 +65,21 @@ export function getNumericInput(id) {
     return val;
 }
 
+export function get_function_name() {
+    const objectiveSelect = document.getElementById('objectiveSelect').value.trim();
+
+    if (objectiveSelect === 'custom') {
+        return document.getElementById('custom_objective').value.trim();
+    }   
+    return objectiveSelect;
+}
+
+
 // Initial plot viewer for each problem
 
 // This function will be moved to visualization.js later. Now it is here for testing purpose
 export function visualize1D_initial(plot_id, x_min = -10, x_max = 10) {
-    const funcname = document.getElementById("objectiveSelect").value.trim();
+    const funcname = get_function_name();
     const x0 = getX0();
 
 
@@ -107,7 +117,7 @@ export function visualize1D_initial(plot_id, x_min = -10, x_max = 10) {
 export function visualize1d(optimizer, x_min = -10, x_max = 10) {
 
     // Access all the information
-    const funcname = document.getElementById('objectiveSelect').value;
+    const funcname = get_function_name();
     const x0 = getX0();
     const plot_id = 'plot';
     const table_body = document.getElementById('optTableBody');
@@ -241,7 +251,7 @@ export function visualize1d(optimizer, x_min = -10, x_max = 10) {
 
 export function visualize2D_initial(plot_id, cameraoverride = null) {
 
-    const funcname = document.getElementById("objectiveSelect").value;
+    const funcname = get_function_name();
     const x0 = getX0();
     const y0 = getY0();
 
@@ -289,7 +299,7 @@ export function visualize2D_initial(plot_id, cameraoverride = null) {
 
 export function visualize2d(optimizer) {
     // Access all the information
-    const funcname = document.getElementById('objectiveSelect').value;
+    const funcname = get_function_name();
     // x0 = [x0, y0], below
     const x0 = [getX0(), getY0()];
 
@@ -421,7 +431,7 @@ export function visualize2d(optimizer) {
 
 
 export function golden_initial() {
-    const funcname = document.getElementById('objectiveSelect').value;
+    const funcname = get_function_name();
     const a0 = getA0();
     const c0 = getC0();
     const plot_id = 'plot';
@@ -444,8 +454,8 @@ export function golden_initial() {
 
     const { X, Y } = vizUtils.get1dPlotData(f, Math.max(Math.abs(a0), Math.abs(c0)) );
 
-    const yMin = 1.5 * (Math.min(...Y) - 5);
-    const yMax = 1.5 * (Math.max(...Y) + 5);
+    const yMin = 1.5 * (Math.min(...Y) - 2);
+    const yMax = 1.5 * (Math.max(...Y) + 2);
 
     const data = vizUtils.createGoldenSectionData(f, X, Y, a0, c0, yMin, yMax);
 
@@ -456,7 +466,7 @@ export function golden_initial() {
 
 export function visualize_golden() {
 
-    const funcname = document.getElementById('objectiveSelect').value;
+    const funcname = get_function_name();
     const a0 = getA0();
     const c0 = getC0();
     const plot_id = 'plot';
@@ -510,7 +520,7 @@ export function visualize_golden() {
 
 export function visualize_powell() {
     // ACCESS PARAMETERS FROM HTML
-    const funcname = document.getElementById('objectiveSelect').value;
+    const funcname = get_function_name();
     const x0 = getX0();
     const y0 = getY0();
 
@@ -585,7 +595,7 @@ export function visualize_powell() {
 // -------------------- NELDER MEAD -------------------- //
 export function visualize_nelder() {
     // ACCESS PARAMETERS FROM HTML
-    const funcname = document.getElementById('objectiveSelect').value;
+    const funcname = get_function_name();
     const plot_id = 'plot';
     const table_body = document.getElementById('optTableBody');
     table_body.innerHTML = ""; // Clear the previous table content
@@ -676,7 +686,7 @@ export function visualize_nelder() {
 
 export function nelder_initial() {
     // ACCESS PARAMETERS FROM HTML
-    const funcname = document.getElementById('objectiveSelect').value;
+    const funcname = get_function_name();
     const func = getFunction(funcname, 2);
     const plot_id = 'plot';
 
